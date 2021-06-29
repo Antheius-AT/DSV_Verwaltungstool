@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DSV_BackEnd_DataLayer;
+using DSV_Backend_ServiceLayer;
+using DSV_BackEnd_ServicesContracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,6 +28,11 @@ namespace DSV_BackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IDatabaseService, SQLServerDatabaseService>();
+            services.AddTransient<IObjectSerializationService, JSONSerializationService>();
+
+            services.AddLogging();
+            services.AddSwaggerGen();
             services.AddControllers();
         }
 
@@ -35,6 +43,13 @@ namespace DSV_BackEnd
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "DSV API V1.0");
+                options.RoutePrefix = string.Empty;
+            });
 
             app.UseHttpsRedirection();
 
