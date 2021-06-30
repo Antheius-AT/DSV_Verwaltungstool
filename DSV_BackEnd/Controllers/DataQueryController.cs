@@ -7,9 +7,11 @@
 namespace DSV_BackEnd.Controllers
 {
     using System;
+    using System.Buffers.Text;
     using System.Threading.Tasks;
     using DSV_BackEnd_DataLayer.DataModel;
     using DSV_BackEnd_ServicesContracts;
+    using DSV_BackEnd_ServicesContracts.ServiceExceptions;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
@@ -80,56 +82,7 @@ namespace DSV_BackEnd.Controllers
             }
         }
 
-        /// <summary>
-        /// Persists a book in the underlying database.
-        /// </summary>
-        /// <param name="book">The book to persist.</param>
-        /// <returns>An action result indicating whether the operation was a success.</returns>
-        [HttpPost]
-        [Route("persist/book")]
-        public async Task<IActionResult> PersistBookAsync([FromBody]Book book)
-        {
-            if (book == null)
-                return BadRequest("Book to persist was null.");
 
-            var operationSuccess = await this.databaseService.PersistBookAsync(book);
-
-            return operationSuccess ? Ok() : StatusCode(500);
-        }
-
-        /// <summary>
-        /// Persists an article in the underlying database.
-        /// </summary>
-        /// <param name="article">The article to persist.</param>
-        /// <returns>An action result indicating whether the operation was a success.</returns>
-        [HttpPost]
-        [Route("persist/article")]
-        public async Task<IActionResult> PersistArticleAsync([FromBody]Article article)
-        {
-            if (article == null)
-                return BadRequest("Article to persist was null.");
-
-            var operationSuccess = await this.databaseService.PersistArticleAsync(article);
-
-            return operationSuccess ? Ok() : StatusCode(500);
-        }
-
-        /// <summary>
-        /// Uploads an image asynchronously and stores it in the database.
-        /// </summary>
-        /// <param name="image">The image to upload.</param>
-        /// <returns>A task handling the logic of saving the image.</returns>
-        [HttpPost]
-        [Route("upload/image")]
-        public async Task<IActionResult> UploadImageAsync([FromBody]Image image)
-        {
-            if (image == null)
-                return BadRequest("Image to upload was null.");
-
-            var operationSuccess = await this.databaseService.PersistImageAsync(image);
-
-            return operationSuccess ? Ok() : StatusCode(500);
-        }
 
         /// <summary>
         /// Fetches all available images asynchronously.
@@ -153,12 +106,64 @@ namespace DSV_BackEnd.Controllers
         }
 
         /// <summary>
+        /// Fetches a single book from the database using the book's unique ID.
+        /// </summary>
+        /// <param name="bookID">The book ID.</param>
+        /// <returns>A task handling the logic of fetching the book.</returns>
+        [HttpGet]
+        [Route("fetchsingle/book")]
+        public async Task<IActionResult> FetchSingleBookAsync(int bookID)
+        {
+            try
+            {
+                var result = await this.databaseService.FetchBookByID(bookID);
+                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(result);
+
+                return Content(serializedObject);
+            }
+            catch (AssetNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches a single article from the database using the article's unique ID.
+        /// </summary>
+        /// <param name="articleID">The article ID.</param>
+        /// <returns>A task object handling the logic of fetching the article.</returns>
+        [HttpGet]
+        [Route("fetchsingle/article")]
+        public async Task<IActionResult> FetchSingleArticleAsync(int articleID)
+        {
+            try
+            {
+                var result = await this.databaseService.FetchArticleByID(articleID);
+                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(result);
+
+                return Content(serializedObject);
+            }
+            catch (AssetNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
         /// Fetches a single image based on its primary key, being the image name.
         /// </summary>
         /// <param name="imageName">The image name.</param>
         /// <returns>A task object handling the logic of fetching the image.</returns>
         [HttpGet]
-        [Route("fetchsingle")]
+        [Route("fetchsingle/image")]
         public async Task<IActionResult> FetchSingleImageAsync(string imageName)
         {
             if (imageName == null)
@@ -171,7 +176,7 @@ namespace DSV_BackEnd.Controllers
 
                 return Content(serializedObject);
             }
-            catch (ArgumentException)
+            catch (AssetNotFoundException)
             {
                 return NotFound();
             }
@@ -179,6 +184,108 @@ namespace DSV_BackEnd.Controllers
             {
                 return StatusCode(500);
             }
+        }
+
+        /// <summary>
+        /// Persists a book in the underlying database.
+        /// </summary>
+        /// <param name="book">The book to persist.</param>
+        /// <returns>An action result indicating whether the operation was a success.</returns>
+        [HttpPost]
+        [Route("persist/book")]
+        public async Task<IActionResult> PersistBookAsync([FromBody]Book book)
+        {
+            if (book == null)
+                return BadRequest("Book to persist was null.");
+
+            var operationSuccess = await this.databaseService.PersistBookAsync(book);
+
+            return operationSuccess ? Ok() : StatusCode(400);
+        }
+
+        /// <summary>
+        /// Persists an article in the underlying database.
+        /// </summary>
+        /// <param name="article">The article to persist.</param>
+        /// <returns>An action result indicating whether the operation was a success.</returns>
+        [HttpPost]
+        [Route("persist/article")]
+        public async Task<IActionResult> PersistArticleAsync([FromBody]Article article)
+        {
+            if (article == null)
+                return BadRequest("Article to persist was null.");
+
+            var operationSuccess = await this.databaseService.PersistArticleAsync(article);
+
+            return operationSuccess ? Ok() : StatusCode(400);
+        }
+
+        /// <summary>
+        /// Uploads an image asynchronously and stores it in the database.
+        /// </summary>
+        /// <param name="image">The image to upload.</param>
+        /// <returns>A task handling the logic of saving the image.</returns>
+        [HttpPost]
+        [Route("upload/image")]
+        public async Task<IActionResult> UploadImageAsync([FromBody]Image image)
+        {
+            if (image == null)
+                return BadRequest("Image to upload was null.");
+
+            var operationSuccess = await this.databaseService.PersistImageAsync(image);
+
+            return operationSuccess ? Ok() : StatusCode(400);
+        }
+
+        /// <summary>
+        /// Modifies a book and updates its information.
+        /// </summary>
+        /// <param name="bookID">The ID of the book to be modified.</param>
+        /// <param name="updatedBook">The updated book data.</param>
+        /// <returns>A task handling the logic of modifying the book.</returns>
+        [HttpPut]
+        [Route("modify/book")]
+        public async Task<IActionResult> ModifyBookAsync(int bookID, [FromBody]Book updatedBook)
+        {
+            if (updatedBook == null)
+                return BadRequest("Updated book must not be null.");
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Modifies an article and updates its information.
+        /// </summary>
+        /// <param name="articleID">The ID of the article to be modified.</param>
+        /// <param name="updatedArticle">The updated article data.</param>
+        /// <returns>A task handling the logic of modifying the article.</returns>
+        [HttpPut]
+        [Route("modify/article")]
+        public async Task<IActionResult> ModifyArticleAsync(int articleID, [FromBody]Book updatedArticle)
+        {
+            if (updatedArticle == null)
+                return BadRequest("Updated book must not be null.");
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Modifies an image and updates it.
+        /// </summary>
+        /// <param name="imageName">The name of the image to update.</param>
+        /// <param name="base64ImageData">The base64 encoded image data.</param>
+        /// <returns>A task object handling the modification of the image data.</returns>
+        [HttpPut]
+        [Route("modify/image")]
+        public async Task<IActionResult> ModifyImageAsync(string imageName, [FromBody]string base64ImageData)
+        {
+            if (imageName == null)
+                return BadRequest("Image name must not be null if you want to modify it.");
+
+            if (base64ImageData == null)
+                return BadRequest("Image data must not be null if you want to replace an existing image with it.");
+
+            throw new NotImplementedException();
         }
     }
 }

@@ -13,6 +13,7 @@ namespace DSV_Backend_ServiceLayer
     using DSV_BackEnd_DataLayer.DataModel;
     using DSV_BackEnd_DataLayer.DataLayerExceptions;
     using DSV_BackEnd_ServicesContracts;
+    using DSV_BackEnd_ServicesContracts.ServiceExceptions;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -220,7 +221,7 @@ namespace DSV_Backend_ServiceLayer
         /// <exception cref="DatabaseOperationException">
         /// Is thrown if the database operation failed.
         /// </exception>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="AssetNotFoundException">
         /// Is thrown if no image with the specified name could be found.
         /// </exception>
         public async Task<Image> FetchImageByName(string imageName)
@@ -230,11 +231,12 @@ namespace DSV_Backend_ServiceLayer
 
             try
             {
-                var result = await this.dbContext.Images.FirstOrDefaultAsync(p => p.ImageName == imageName) ?? throw new ArgumentNullException();
+                var result = await this.dbContext.Images.FirstOrDefaultAsync(p => p.ImageName == imageName) ?? throw new AssetNotFoundException();
                 this.databaseServiceLogger.LogInformation($"Image with name {imageName} successfully fetched.");
+
                 return result;
             }
-            catch (ArgumentNullException)
+            catch (AssetNotFoundException)
             {
                 this.databaseServiceLogger.LogInformation($"Image with name {imageName} could not be found.");
                 throw;
@@ -244,6 +246,97 @@ namespace DSV_Backend_ServiceLayer
                 this.databaseServiceLogger.LogError("Database error occurred during fetching of single image", e);
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Fetches a single book using its unique ID.
+        /// </summary>
+        /// <param name="ID">The book's ID.</param>
+        /// <returns>A task object handling the logic of fetching the book.</returns>
+        /// <exception cref="AssetNotFoundException">
+        /// Is thrown if no book could be found with the specified ID.
+        /// </exception>
+        public async Task<Book> FetchBookByID(int ID)
+        {
+            try
+            {
+                var result = await this.dbContext.Books.FindAsync(ID) ?? throw new AssetNotFoundException();
+                this.databaseServiceLogger.LogInformation($"Book with ID: {ID} was successfully fetched.");
+
+                return result;
+            }
+            catch (AssetNotFoundException)
+            {
+                this.databaseServiceLogger.LogInformation($"Book with ID: {ID} was not found.");
+                throw;
+            }
+            catch (Exception e)
+            {
+                this.databaseServiceLogger.LogError($"Database error occurred during fetching of book with ID: {ID}", e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Fetches a single article using its unique ID.
+        /// </summary>
+        /// <param name="ID">The article's ID.</param>
+        /// <returns>A task object handling the logic of fetching the article.</returns>
+        /// <exception cref="AssetNotFoundException">
+        /// Is thrown if the asset could not be found.
+        /// </exception>
+        public async Task<Article> FetchArticleByID(int ID)
+        {
+            try
+            {
+                var result = await this.dbContext.Articles.FindAsync(ID) ?? throw new AssetNotFoundException();
+                this.databaseServiceLogger.LogInformation($"Article with ID: {ID} was successfully fetched.");
+
+                return result;
+            }
+            catch (AssetNotFoundException)
+            {
+                this.databaseServiceLogger.LogInformation($"Article with ID: {ID} was not found.");
+                throw;
+            }
+            catch (Exception e)
+            {
+                this.databaseServiceLogger.LogError($"Database error occurred during fetching of article with ID: {ID}", e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Modifies an existing book and overwrites its data with newly specified data.
+        /// </summary>
+        /// <param name="ID">The ID of the book to modify.</param>
+        /// <param name="updatedBook">The updated book definition.</param>
+        /// <returns>A task object handling the logic of updating the book definition.</returns>
+        public async Task<bool> ModifyBookAsync(int ID, Book updatedBook)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Modifies an existing article and overwrites its data with newly specified data.
+        /// </summary>
+        /// <param name="ID">The ID of the book to modify.</param>
+        /// <param name="updatedArticle">The updated article definition.</param>
+        /// <returns>A task object handling the logic of updating the article definition.</returns>
+        public async Task<bool> ModifyArticleAsync(int ID, Article updatedArticle)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Modifies an existing image and overwrites its data with newly specified data.
+        /// </summary>
+        /// <param name="imageName">The name of the image to modify.</param>
+        /// <param name="imageData">The base64 encoded image data to replace the old data with.</param>
+        /// <returns>A task object handling the logic of updating the image definition.</returns>
+        public async Task<bool> ModifyImageDataAsync(string imageName, string imageData)
+        {
+            throw new NotImplementedException();
         }
     }
 }

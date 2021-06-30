@@ -82,7 +82,7 @@ namespace DSV_BackEnd_ServicesContracts
         /// <exception cref="DatabaseOperationException">
         /// Is thrown if the database operation failed.
         /// </exception>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="AssetNotFoundException">
         /// Is thrown if no image with the specified name could be found.
         /// </exception>
         Task<Image> FetchImageByName(string imageName);
@@ -96,5 +96,55 @@ namespace DSV_BackEnd_ServicesContracts
         /// Is thrown if the database operation failed.
         /// </exception>
         Task<ICollection<Image>> FetchImagesAsync();
+
+        /// <summary>
+        /// Fetches a book based on its unique ID.
+        /// </summary>
+        /// <param name="ID">The book's ID.</param>
+        /// <returns>A task handling the logic of fetching the book.</returns>
+        /// <exception cref="DatabaseOperationException">
+        /// Is thrown if a database error occurred during fetching.
+        /// </exception>
+        /// <exception cref="AssetNotFoundException">
+        /// Is thrown if no book with the ID specified could be found.
+        /// </exception>
+        Task<Book> FetchBookByID(int ID);
+
+        /// <summary>
+        /// Fetches an article based on its unique ID.
+        /// </summary>
+        /// <param name="ID">The article's ID.</param>
+        /// <returns>A task handling the logic of fetching the article.</returns>
+        /// <exception cref="DatabaseOperationException">
+        /// Is thrown if a database error occurred during fetching.
+        /// </exception>
+        /// <exception cref="AssetNotFoundException">
+        /// Is thrown if no book with the ID specified could be found.
+        /// </exception>
+        Task<Article> FetchArticleByID(int ID);
+
+        /// <summary>
+        /// Modifies an existing book and overwrites its data with newly specified data.
+        /// </summary>
+        /// <param name="ID">The ID of the book to modify.</param>
+        /// <param name="updatedBook">The updated book definition.</param>
+        /// <returns>A task object handling the logic of updating the book definition.</returns>
+        Task<bool> ModifyBookAsync(int ID, Book updatedBook);
+
+        /// <summary>
+        /// Modifies an existing article and overwrites its data with newly specified data.
+        /// </summary>
+        /// <param name="ID">The ID of the book to modify.</param>
+        /// <param name="updatedArticle">The updated article definition.</param>
+        /// <returns>A task object handling the logic of updating the article definition.</returns>
+        Task<bool> ModifyArticleAsync(int ID, Article updatedArticle);
+
+        /// <summary>
+        /// Modifies an existing image and overwrites its data with newly specified data.
+        /// </summary>
+        /// <param name="imageName">The name of the image to modify.</param>
+        /// <param name="imageData">The base64 encoded image data to replace the old data with.</param>
+        /// <returns>A task object handling the logic of updating the image definition.</returns>
+        Task<bool> ModifyImageDataAsync(string imageName, string imageData);
     }
 }
