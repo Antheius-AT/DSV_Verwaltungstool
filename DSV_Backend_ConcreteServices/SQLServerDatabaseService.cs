@@ -314,7 +314,29 @@ namespace DSV_Backend_ServiceLayer
         /// <returns>A task object handling the logic of updating the book definition.</returns>
         public async Task<bool> ModifyBookAsync(int ID, Book updatedBook)
         {
-            throw new NotImplementedException();
+            if (updatedBook == null)
+                throw new ArgumentNullException(nameof(updatedBook), "Updated book must not be null.");
+
+            try
+            {
+                var toModify = await this.dbContext.Books.FirstOrDefaultAsync(p => p.AssetID == ID) ?? throw new AssetNotFoundException();
+                
+                this.UpdateBookData(toModify, updatedBook);
+                await this.dbContext.SaveChangesAsync();
+                this.databaseServiceLogger.LogInformation($"Successfully replaced book definition for book with ID: {ID}", toModify, updatedBook);
+
+                return true;
+            }
+            catch (AssetNotFoundException)
+            {
+                this.databaseServiceLogger.LogInformation($"Tried to modify book with ID: {ID}, but the asset was not found.");
+                return false;
+            }
+            catch (Exception e)
+            {
+                this.databaseServiceLogger.LogError($"Error occurred during modifying book with ID: {ID}", e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -337,6 +359,65 @@ namespace DSV_Backend_ServiceLayer
         public async Task<bool> ModifyImageDataAsync(string imageName, string imageData)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Deletes the book with the specified ID from the database.
+        /// </summary>
+        /// <param name="bookID">The ID of the book to delete.</param>
+        /// <returns>A task handling the logic of deletion and returning whether the operation was a success.</returns>
+        public async Task<bool> DeleteBookAsync(int bookID)
+        {
+            try
+            {
+                var toDelete = await this.dbContext.Books.FindAsync(bookID) ?? throw new AssetNotFoundException();
+
+                this.dbContext.Books.Remove(toDelete);
+                await this.dbContext.SaveChangesAsync();
+
+                this.databaseServiceLogger.LogInformation($"Successfully deleted book with ID: {bookID}.");
+
+                return true;
+            }
+            catch (AssetNotFoundException)
+            {
+                this.databaseServiceLogger.LogInformation($"Could not find book with ID {bookID} to delete.");
+                return false;
+            }
+            catch (Exception e)
+            {
+                this.databaseServiceLogger.LogError($"Error occurred during deletion of book with ID: {bookID}", e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Overwrites an old book <paramref name="toModify"/> with a new definition <paramref name="updatedBook"/>.
+        /// </summary>
+        /// <param name="toModify">The book to modify.</param>
+        /// <param name="updatedBook">The new book to replace the old one.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="updatedBook"/> or <paramref name="toModify"/> are null.
+        /// </exception>
+        private void UpdateBookData(Book toModify, Book updatedBook)
+        {
+            if (toModify == null)
+                throw new ArgumentNullException(nameof(toModify), "Book to modify must not be null.");
+
+            if (updatedBook == null)
+                throw new ArgumentNullException(nameof(updatedBook), "Book to update must not be null.");
+
+            toModify.Author = updatedBook.Author;
+            toModify.Editor = updatedBook.Editor;
+            toModify.ImageName = updatedBook.ImageName;
+            toModify.ISBN = updatedBook.ISBN;
+            toModify.Pages = updatedBook.Pages;
+            toModify.PreviousStorageLocation = updatedBook.PreviousStorageLocation;
+            toModify.PublicationLocation = updatedBook.PublicationLocation;
+            toModify.PublicationYear = updatedBook.PublicationYear;
+            toModify.Publisher = updatedBook.Publisher;
+            toModify.SubLevelTitle = updatedBook.SubLevelTitle;
+            toModify.Title = updatedBook.Title;
         }
     }
 }

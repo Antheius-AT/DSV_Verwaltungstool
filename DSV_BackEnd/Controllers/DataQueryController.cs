@@ -250,7 +250,9 @@ namespace DSV_BackEnd.Controllers
             if (updatedBook == null)
                 return BadRequest("Updated book must not be null.");
 
-            throw new NotImplementedException();
+            var success = await this.databaseService.ModifyBookAsync(bookID, updatedBook);
+
+            return success ? Ok() : StatusCode(400);
         }
 
         /// <summary>
