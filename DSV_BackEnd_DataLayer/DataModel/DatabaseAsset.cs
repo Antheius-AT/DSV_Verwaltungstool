@@ -4,6 +4,10 @@
 // </copyright>
 // <author>Gregor Faiman</author>
 //-----------------------------------------------------------------------
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace DSV_BackEnd_DataLayer.DataModel
 {
     /// <summary>
@@ -15,6 +19,7 @@ namespace DSV_BackEnd_DataLayer.DataModel
         /// <summary>
         /// Gets or sets the assets ID.
         /// </summary>
+        [Key]
         public int AssetID
         {
             get;
@@ -31,10 +36,9 @@ namespace DSV_BackEnd_DataLayer.DataModel
         }
 
         /// <summary>
-        /// Gets or sets a string array containing strings representing the byte format
-        /// of stored images associated with this asset.
+        /// Gets or sets the collection of images associated with this asset.
         /// </summary>
-        public string[] Base64EncodedImageBytes
+        public string ImageName
         {
             get;
             set;

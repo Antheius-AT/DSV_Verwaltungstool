@@ -42,15 +42,11 @@ namespace DSV_Backend_ServiceLayer
         /// </summary>
         /// <param name="configuration">Configuration object storing connection strings.</param>
         /// <param name="logger">Logger object capable of logging actions.</param>
-        public SQLServerDatabaseService(IConfiguration configuration, ILogger<SQLServerDatabaseService> logger)
+        public SQLServerDatabaseService(IConfiguration configuration, ILogger<SQLServerDatabaseService> logger, DSVDatabaseContext dbContext)
         {
             this.configuration = configuration;
             this.databaseServiceLogger = logger;
-
-            var optionsBuilder = new DbContextOptionsBuilder<DSVDatabaseContext>();
-            optionsBuilder.UseSqlServer(this.configuration.GetConnectionString("DSV_DEV_DATABASE"));
-
-            this.dbContext = new DSVDatabaseContext(optionsBuilder.Options);
+            this.dbContext = dbContext;
         }
 
         /// <summary>
@@ -155,6 +151,98 @@ namespace DSV_Backend_ServiceLayer
                 this.databaseServiceLogger.LogError($"Could not persist article into the database. Article ID: {article.AssetID}");
 
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Persists an image in the database asynchronously.
+        /// </summary>
+        /// <param name="image">The image to persist.</param>
+        /// <returns>A task handling the logic and containing a value indicating
+        /// whether the operation was a success in its result.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="image"/> is null.
+        /// </exception>
+        public async Task<bool> PersistImageAsync(Image image)
+        {
+            if (image == null)
+                throw new ArgumentNullException(nameof(image), "Image must not be null.");
+
+            try
+            {
+                await this.dbContext.Images.AddAsync(image);
+                await this.dbContext.SaveChangesAsync();
+                this.databaseServiceLogger.LogInformation("Image successfully uploaded.");
+
+                return true;
+            }
+            catch (Exception)
+            {
+                this.databaseServiceLogger.LogInformation("Image upload failed.");
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Fetches all stored images in the database asynchronously.
+        /// </summary>
+        /// <returns>A task handling the logic and containing the resulting collection
+        /// in its result.</returns>
+        /// <exception cref="DatabaseOperationException">
+        /// Is thrown if the database operation failed.
+        /// </exception>
+        public async Task<ICollection<Image>> FetchImagesAsync()
+        {
+            try
+            {
+                var result = await this.dbContext.Images.ToArrayAsync();
+                this.databaseServiceLogger.LogInformation("Successfully fetched available images.");
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                this.databaseServiceLogger.LogInformation($"The following error occurred during fetching of all images: {e.Message}");
+                throw new DatabaseOperationException("Database error during fetching of images", e);
+            }
+        }
+
+        /// <summary>
+        /// Fetches a specified image based on its name.
+        /// </summary>
+        /// <param name="imageName">The image name to look for.</param>
+        /// <returns>A task object handling the logic and containing the resulting
+        /// image in its result on termination.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="imageName"/> is null.
+        /// </exception>
+        /// <exception cref="DatabaseOperationException">
+        /// Is thrown if the database operation failed.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Is thrown if no image with the specified name could be found.
+        /// </exception>
+        public async Task<Image> FetchImageByName(string imageName)
+        {
+            if (imageName == null)
+                throw new ArgumentNullException(nameof(imageName), "Image name must not be null.");
+
+            try
+            {
+                var result = await this.dbContext.Images.FirstOrDefaultAsync(p => p.ImageName == imageName) ?? throw new ArgumentNullException();
+                this.databaseServiceLogger.LogInformation($"Image with name {imageName} successfully fetched.");
+                return result;
+            }
+            catch (ArgumentNullException)
+            {
+                this.databaseServiceLogger.LogInformation($"Image with name {imageName} could not be found.");
+                throw;
+            }
+            catch (Exception e)
+            {
+                this.databaseServiceLogger.LogError("Database error occurred during fetching of single image", e);
+                throw;
             }
         }
     }

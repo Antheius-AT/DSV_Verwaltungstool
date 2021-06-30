@@ -58,5 +58,43 @@ namespace DSV_BackEnd_ServicesContracts
         /// Is thrown if <paramref name="article"/> is null.
         /// </exception>
         Task<bool> PersistArticleAsync(Article article);
+
+        /// <summary>
+        /// Persists an image asynchronously.
+        /// </summary>
+        /// <param name="image">The image to persist.</param>
+        /// <returns>A task handling the logic of persisting the image and containing
+        /// a value indicating whether the operation was a success in its result.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="image"/> is null.
+        /// </exception>
+        Task<bool> PersistImageAsync(Image image);
+
+        /// <summary>
+        /// Fetches a specified image based on its name.
+        /// </summary>
+        /// <param name="imageName">The image name to look for.</param>
+        /// <returns>A task object handling the logic and containing the resulting
+        /// image in its result on termination.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="imageName"/> is null.
+        /// </exception>
+        /// <exception cref="DatabaseOperationException">
+        /// Is thrown if the database operation failed.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Is thrown if no image with the specified name could be found.
+        /// </exception>
+        Task<Image> FetchImageByName(string imageName);
+
+        /// <summary>
+        /// Fetches all stored images in the database asynchronously.
+        /// </summary>
+        /// <returns>A task handling the logic and containing the resulting collection
+        /// in its result.</returns>
+        /// <exception cref="DatabaseOperationException">
+        /// Is thrown if the database operation failed.
+        /// </exception>
+        Task<ICollection<Image>> FetchImagesAsync();
     }
 }

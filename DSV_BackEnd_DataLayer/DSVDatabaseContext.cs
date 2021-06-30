@@ -39,5 +39,14 @@ namespace DSV_BackEnd_DataLayer
             get;
             set;
         }
+
+        /// <summary>
+        /// Gets or sets the stored images.
+        /// </summary>
+        public DbSet<Image> Images
+        {
+            get;
+            set;
+        }
     }
 }
