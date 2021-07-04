@@ -17,6 +17,7 @@ namespace DSV_Backend_ServiceLayer
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using System.Text;
 
     /// <summary>
     /// Represents a database service using Microsoft SQL Server.
@@ -342,12 +343,34 @@ namespace DSV_Backend_ServiceLayer
         /// <summary>
         /// Modifies an existing article and overwrites its data with newly specified data.
         /// </summary>
-        /// <param name="ID">The ID of the book to modify.</param>
+        /// <param name="ID">The ID of the article to modify.</param>
         /// <param name="updatedArticle">The updated article definition.</param>
         /// <returns>A task object handling the logic of updating the article definition.</returns>
         public async Task<bool> ModifyArticleAsync(int ID, Article updatedArticle)
         {
-            throw new NotImplementedException();
+            if (updatedArticle == null)
+                throw new ArgumentNullException(nameof(updatedArticle), "Updated article must not be null.");
+
+            try
+            {
+                var toModify = await this.dbContext.Articles.FirstOrDefaultAsync(p => p.AssetID == ID) ?? throw new AssetNotFoundException();
+
+                this.UpdateArticleData(toModify, updatedArticle);
+                await this.dbContext.SaveChangesAsync();
+                this.databaseServiceLogger.LogInformation($"Successfully edited article with ID: {ID}");
+
+                return true;
+            }
+            catch (AssetNotFoundException)
+            {
+                this.databaseServiceLogger.LogInformation($"Tried to find article with id {ID} to modify, but asset was not found.");
+                return false;
+            }
+            catch (Exception)
+            {
+                this.databaseServiceLogger.LogError($"Database error occurred while looking for article with ID {ID}");
+                throw;
+            }
         }
 
         /// <summary>
@@ -358,7 +381,39 @@ namespace DSV_Backend_ServiceLayer
         /// <returns>A task object handling the logic of updating the image definition.</returns>
         public async Task<bool> ModifyImageDataAsync(string imageName, string imageData)
         {
-            throw new NotImplementedException();
+            if (imageData == null)
+                throw new ArgumentNullException(nameof(imageData), "Image data must not be null.");                
+
+            try
+            {
+                var toModify = await this.dbContext.Images.FirstOrDefaultAsync(p => p.ImageName == imageName) ?? throw new AssetNotFoundException();
+
+                // Check whether image data is valid base64 string.
+                Convert.FromBase64String(imageData);
+
+                toModify.Base64EncodedImageData = imageData;
+                await this.dbContext.SaveChangesAsync();
+                this.databaseServiceLogger.LogInformation($"Successfully updated image with name: {imageName}");
+
+                return true;
+            }
+            catch (AssetNotFoundException)
+            {
+                this.databaseServiceLogger.LogInformation($"Image with name {imageName} was not found.");
+
+                return false;
+            }
+            catch (FormatException)
+            {
+                this.databaseServiceLogger.LogInformation($"Image to edit was found, but user specified invalid image data.");
+
+                return false;
+            }
+            catch (Exception)
+            {
+                this.databaseServiceLogger.LogError($"Database error occurred while looking for image: {imageName}");
+                throw;
+            }
         }
 
         /// <summary>
@@ -418,6 +473,30 @@ namespace DSV_Backend_ServiceLayer
             toModify.Publisher = updatedBook.Publisher;
             toModify.SubLevelTitle = updatedBook.SubLevelTitle;
             toModify.Title = updatedBook.Title;
+        }
+
+        /// <summary>
+        /// Overwrites an old article <paramref name="toModify"/> with a new definition <paramref name="updatedArticle"/>.
+        /// </summary>
+        /// <param name="toModify">The book to modify.</param>
+        /// <param name="updatedArticle">The new book to replace the old one.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="updatedArticle"/> or <paramref name="toModify"/> are null.
+        /// </exception>
+        private void UpdateArticleData(Article toModify, Article updatedArticle)
+        {
+            if (toModify == null)
+                throw new ArgumentNullException(nameof(toModify), "Article to modify must not be null.");
+
+            if (updatedArticle == null)
+                throw new ArgumentNullException(nameof(updatedArticle), "Article to update must not be null.");
+
+            toModify.Author = updatedArticle.Author;
+            toModify.Editor = updatedArticle.Editor;
+            toModify.ImageName = updatedArticle.ImageName;
+            toModify.PreviousStorageLocation = updatedArticle.PreviousStorageLocation;
+            toModify.PublicationYear = updatedArticle.PublicationYear;
+            toModify.Title = updatedArticle.Title;
         }
     }
 }

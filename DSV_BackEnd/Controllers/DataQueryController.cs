@@ -263,12 +263,14 @@ namespace DSV_BackEnd.Controllers
         /// <returns>A task handling the logic of modifying the article.</returns>
         [HttpPut]
         [Route("modify/article")]
-        public async Task<IActionResult> ModifyArticleAsync(int articleID, [FromBody]Book updatedArticle)
+        public async Task<IActionResult> ModifyArticleAsync(int articleID, [FromBody]Article updatedArticle)
         {
             if (updatedArticle == null)
                 return BadRequest("Updated book must not be null.");
 
-            throw new NotImplementedException();
+            var success = await this.databaseService.ModifyArticleAsync(articleID, updatedArticle);
+
+            return success ? Ok() : StatusCode(400);
         }
 
         /// <summary>
@@ -287,7 +289,9 @@ namespace DSV_BackEnd.Controllers
             if (base64ImageData == null)
                 return BadRequest("Image data must not be null if you want to replace an existing image with it.");
 
-            throw new NotImplementedException();
+            var success = await this.databaseService.ModifyImageDataAsync(imageName, base64ImageData);
+
+            return success ? Ok() : StatusCode(400);
         }
     }
 }
