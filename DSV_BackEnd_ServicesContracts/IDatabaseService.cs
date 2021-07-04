@@ -11,6 +11,7 @@ namespace DSV_BackEnd_ServicesContracts
     using System.Threading.Tasks;
     using DSV_BackEnd_DataLayer.DataModel;
     using DSV_BackEnd_DataLayer.DataLayerExceptions;
+    using ServiceExceptions;
 
     /// <summary>
     /// Represents an abstract database service capable of connecting to and interacting 
@@ -146,5 +147,28 @@ namespace DSV_BackEnd_ServicesContracts
         /// <param name="imageData">The base64 encoded image data to replace the old data with.</param>
         /// <returns>A task object handling the logic of updating the image definition.</returns>
         Task<bool> ModifyImageDataAsync(string imageName, string imageData);
+
+        /// <summary>
+        /// Persists a user in the database asynchronously.
+        /// </summary>
+        /// <param name="user">The user to persist.</param>
+        /// <returns>A task object handling the persisting of the user.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="user"/> is null.
+        /// </exception>
+        Task<bool> PersistUserAsync(User user);
+
+        /// <summary>
+        /// Retrieves a user asynchronously via its username.
+        /// </summary>
+        /// <param name="username">The user name of the user to retrieve.</param>
+        /// <returns>A task object handling the logic of retrieving the user.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="username"/> is null.
+        /// </exception>
+        /// <exception cref="AssetNotFoundException">
+        /// Is thrown if the specified user was not found.
+        /// </exception>
+        Task<User> RetrieveUserAsync(string username);
     }
 }

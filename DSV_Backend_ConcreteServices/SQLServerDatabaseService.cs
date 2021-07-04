@@ -17,7 +17,6 @@ namespace DSV_Backend_ServiceLayer
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-    using System.Text;
 
     /// <summary>
     /// Represents a database service using Microsoft SQL Server.
@@ -118,11 +117,11 @@ namespace DSV_Backend_ServiceLayer
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 this.databaseServiceLogger.LogError($"Could not persist book in database. Book ID: {book.AssetID}");
 
-                return false;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -148,11 +147,11 @@ namespace DSV_Backend_ServiceLayer
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 this.databaseServiceLogger.LogError($"Could not persist article into the database. Article ID: {article.AssetID}");
 
-                return false;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -178,11 +177,11 @@ namespace DSV_Backend_ServiceLayer
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 this.databaseServiceLogger.LogInformation("Image upload failed.");
 
-                return false;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -245,7 +244,7 @@ namespace DSV_Backend_ServiceLayer
             catch (Exception e)
             {
                 this.databaseServiceLogger.LogError("Database error occurred during fetching of single image", e);
-                throw;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -274,7 +273,7 @@ namespace DSV_Backend_ServiceLayer
             catch (Exception e)
             {
                 this.databaseServiceLogger.LogError($"Database error occurred during fetching of book with ID: {ID}", e);
-                throw;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -303,7 +302,7 @@ namespace DSV_Backend_ServiceLayer
             catch (Exception e)
             {
                 this.databaseServiceLogger.LogError($"Database error occurred during fetching of article with ID: {ID}", e);
-                throw;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -336,7 +335,7 @@ namespace DSV_Backend_ServiceLayer
             catch (Exception e)
             {
                 this.databaseServiceLogger.LogError($"Error occurred during modifying book with ID: {ID}", e);
-                throw;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -366,10 +365,10 @@ namespace DSV_Backend_ServiceLayer
                 this.databaseServiceLogger.LogInformation($"Tried to find article with id {ID} to modify, but asset was not found.");
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 this.databaseServiceLogger.LogError($"Database error occurred while looking for article with ID {ID}");
-                throw;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -409,10 +408,10 @@ namespace DSV_Backend_ServiceLayer
 
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 this.databaseServiceLogger.LogError($"Database error occurred while looking for image: {imageName}");
-                throw;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -442,7 +441,7 @@ namespace DSV_Backend_ServiceLayer
             catch (Exception e)
             {
                 this.databaseServiceLogger.LogError($"Error occurred during deletion of book with ID: {bookID}", e);
-                throw;
+                throw new DatabaseOperationException("Database error occurred", e);
             }
         }
 
@@ -497,6 +496,59 @@ namespace DSV_Backend_ServiceLayer
             toModify.PreviousStorageLocation = updatedArticle.PreviousStorageLocation;
             toModify.PublicationYear = updatedArticle.PublicationYear;
             toModify.Title = updatedArticle.Title;
+        }
+
+        /// <summary>
+        /// Persists a user in the database asynchronously.
+        /// </summary>
+        /// <param name="user">The user to persist.</param>
+        /// <returns>A task object handling the persisting of the user.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="user"/> is null.
+        /// </exception>
+        /// <exception cref="DatabaseOperationException">
+        /// Is thrown if an internal database error occurred.
+        /// </exception>
+        public async Task<bool> PersistUserAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user), "User must not be null.");
+
+            if (this.dbContext.Users.FirstOrDefaultAsync(p => p.Username == user.Username) != null)
+                return false;
+
+            try
+            {
+                await this.dbContext.Users.AddAsync(user);
+                await this.dbContext.SaveChangesAsync();
+                this.databaseServiceLogger.LogInformation($"Created new user. Username: {user.Username}");
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.databaseServiceLogger.LogError($"Database error occurred while attempting to persist user with username: {user.Username}");
+                throw new DatabaseOperationException("Database error occurred", e);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a user asynchronously via its username.
+        /// </summary>
+        /// <param name="username">The user name of the user to retrieve.</param>
+        /// <returns>A task object handling the logic of retrieving the user.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="username"/> is null.
+        /// </exception>
+        /// <exception cref="AssetNotFoundException">
+        /// Is thrown if the specified user was not found.
+        /// </exception>
+        public Task<User> RetrieveUserAsync(string username)
+        {
+            if (username == null)
+                throw new ArgumentNullException(nameof(username), "Username must not be null.");
+
+            throw new NotImplementedException();
         }
     }
 }

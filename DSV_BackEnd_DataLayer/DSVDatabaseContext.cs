@@ -48,5 +48,14 @@ namespace DSV_BackEnd_DataLayer
             get;
             set;
         }
+
+        /// <summary>
+        /// Gets or sets the stored users.
+        /// </summary>
+        public DbSet<User> Users
+        {
+            get;
+            set;
+        }
     }
 }

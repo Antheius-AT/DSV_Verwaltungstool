@@ -3,14 +3,16 @@ using DSV_BackEnd_DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DSV_BackEnd_DataLayer.Migrations
 {
     [DbContext(typeof(DSVDatabaseContext))]
-    partial class DSVDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210704114413_Added User to data model migration")]
+    partial class AddedUsertodatamodelmigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
