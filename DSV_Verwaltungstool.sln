@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSV_BackEnd_ServicesContrac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{4AEAAD7B-4DD0-4A4A-9AD9-F4162B66CB6E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSV_Frontend", "DSV_Frontend\DSV_Frontend.csproj", "{55C6006F-C27B-4014-95F7-5BA2DF00BF14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{4AEAAD7B-4DD0-4A4A-9AD9-F4162B66CB6E}.Release|x64.Build.0 = Release|Any CPU
 		{4AEAAD7B-4DD0-4A4A-9AD9-F4162B66CB6E}.Release|x86.ActiveCfg = Release|Any CPU
 		{4AEAAD7B-4DD0-4A4A-9AD9-F4162B66CB6E}.Release|x86.Build.0 = Release|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Debug|x64.Build.0 = Debug|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Debug|x86.Build.0 = Debug|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Release|x64.ActiveCfg = Release|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Release|x64.Build.0 = Release|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Release|x86.ActiveCfg = Release|Any CPU
+		{55C6006F-C27B-4014-95F7-5BA2DF00BF14}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
