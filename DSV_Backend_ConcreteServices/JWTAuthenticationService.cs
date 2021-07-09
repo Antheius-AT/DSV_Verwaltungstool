@@ -14,7 +14,9 @@ namespace DSV_Backend_ServiceLayer
     using JWT.Algorithms;
     using JWT.Builder;
     using JWT.Exceptions;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Shared;
 
     /// <summary>
     /// Represent an authentication service using JWT as its method of authentication and authorization.
@@ -36,10 +38,11 @@ namespace DSV_Backend_ServiceLayer
         /// </summary>
         private ILogger<JWTAuthenticationService> authServiceLogger;
 
-        public JWTAuthenticationService(IDatabaseService databaseService, ILogger<JWTAuthenticationService> authServiceLogger)
+        public JWTAuthenticationService(IDatabaseService databaseService, ILogger<JWTAuthenticationService> authServiceLogger, IConfiguration configuration)
         {
             this.databaseService = databaseService;
             this.authServiceLogger = authServiceLogger;
+            this.secret = configuration["SECRET"];
         }
 
         /// <summary>
@@ -83,30 +86,25 @@ namespace DSV_Backend_ServiceLayer
         /// Completes an authentication request by using the <see cref="databaseService"/> to check whether
         /// a <see cref="User"/> with the specified authentication credentials exists.
         /// </summary>
-        /// <param name="username">The username the current user is trying to authenticate with.</param>
-        /// <param name="passwordHash">The password hash the current user is trying to authenticate with.</param>
+        /// <param name="userData">User data of the user to authenticate.</param>
         /// <returns>A task object handling the logic of completing authentication.</returns>
         /// <exception cref="ArgumentNullException">
-        /// Is thrown if <paramref name="passwordHash"/> is null
-        /// Is thrown if <paramref name="username"/> is null.
+        /// Is thrown if <paramref name="userData"/> is null
         /// </exception>
-        public async Task<bool> CompleteAuthenticationAsync(string username, string passwordHash)
+        public async Task<bool> CompleteAuthenticationAsync(UserDataDTO userData)
         {
-            if (username == null)
-                throw new ArgumentNullException(nameof(username), "Username must not be null.");
-
-            if (passwordHash == null)
-                throw new ArgumentNullException(nameof(passwordHash), "Password hash must not be null.");
+            if (userData == null)
+                throw new ArgumentNullException(nameof(userData), "User data must not be null.");
 
             try
             {
-                var user = await this.databaseService.RetrieveUserAsync(username);
+                var user = await this.databaseService.RetrieveUserAsync(userData.Username);
 
-                return user.PasswordHash == passwordHash;
+                return user.PasswordHash == userData.PasswordHash;
             }
             catch (AssetNotFoundException)
             {
-                this.authServiceLogger.LogInformation($"Specified user {username} was not found when attempting to authenticate.");
+                this.authServiceLogger.LogInformation($"Specified user {userData.Username} was not found when attempting to authenticate.");
 
                 return false;
             }
@@ -116,15 +114,19 @@ namespace DSV_Backend_ServiceLayer
         /// Completes a registration request by using the <see cref="databaseService"/> to persist
         /// the specified user in the database.
         /// </summary>
-        /// <param name="user">The user to register.</param>
+        /// <param name="userData">The user data of the user to register.</param>
         /// <returns>A task object handling the logic of registrating the user.</returns>
         /// <exception cref="ArgumentNullException">
-        /// Is thrown if <paramref name="user"/> is null
+        /// Is thrown if <paramref name="userData"/> is null
         /// </exception>
-        public async Task<bool> CompleteRegistrationAsync(User user)
+        public async Task<bool> CompleteRegistrationAsync(UserDataDTO userData)
         {
-            if (user == null)
-                throw new ArgumentNullException(nameof(user), "User must not be null.");
+            if (userData == null)
+                throw new ArgumentNullException(nameof(userData), "User data must not be null.");
+
+            var user = new User();
+            user.Username = userData.Username;
+            user.PasswordHash = userData.PasswordHash;
 
             var result = await this.databaseService.PersistUserAsync(user);
 
@@ -147,7 +149,6 @@ namespace DSV_Backend_ServiceLayer
             var token = JwtBuilder.Create()
                 .WithAlgorithm(new HMACSHA256Algorithm())
                 .WithSecret(this.secret)
-                .AddClaim("exp", DateTime.UtcNow.AddMinutes(30).ToFileTime())
                 .AddClaim("name", username)
                 .ExpirationTime(DateTime.UtcNow.AddMinutes(30))
                 .Encode();

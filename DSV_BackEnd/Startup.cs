@@ -36,6 +36,7 @@ namespace DSV_BackEnd
 
             services.AddTransient<IDatabaseService, SQLServerDatabaseService>();
             services.AddTransient<IObjectSerializationService, JSONSerializationService>();
+            services.AddTransient<IAuthenticationService, JWTAuthenticationService>();
 
             services.AddLogging();
             services.AddSwaggerGen();

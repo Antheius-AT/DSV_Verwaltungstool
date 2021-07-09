@@ -31,22 +31,37 @@ namespace DSV_BackEnd.Controllers
         /// </summary>
         private IObjectSerializationService objectSerializationService;
 
-        public DataQueryController(IDatabaseService databaseService, IObjectSerializationService objectSerializationService)
+        /// <summary>
+        /// Represents an authentication service.
+        /// </summary>
+        private IAuthenticationService authService;
+
+        public DataQueryController(IDatabaseService databaseService, IObjectSerializationService objectSerializationService, IAuthenticationService authService)
         {
             this.databaseService = databaseService;
             this.objectSerializationService = objectSerializationService;
+            this.authService = authService;
         }
 
         /// <summary>
         /// Asynchronously fetches all available books stored in the database.
         /// </summary>
+        /// <param name="token">The authentication token.</param>
         /// <returns>A task object handling the logic of fetching the books
         /// and converting them into a string encoded response which is stored in the task's result
         /// on termination.</returns>
         [HttpGet]
         [Route("fetchall/books")]
-        public async Task<IActionResult> FetchBooksAsync()
+        public async Task<IActionResult> FetchBooksAsync(string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             try
             {
                 var result = await this.databaseService.FetchBooksAsync();
@@ -63,12 +78,21 @@ namespace DSV_BackEnd.Controllers
         /// <summary>
         /// Asynchronously fetches all available articles stored in the database.
         /// </summary>
+        /// <param name="token">The authentication token.</param>
         /// <returns>A task object handling the logic of fetching the books and converting them
         /// into a string encoded response which is stored in the task's result on termination.</returns>
         [HttpGet]
         [Route("fetchall/articles")]
-        public async Task<IActionResult> FetchArticlesAsync()
+        public async Task<IActionResult> FetchArticlesAsync(string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             try
             {
                 var result = await this.databaseService.FetchArticlesAsync();
@@ -87,11 +111,20 @@ namespace DSV_BackEnd.Controllers
         /// <summary>
         /// Fetches all available images asynchronously.
         /// </summary>
+        /// <param name="token">The authentication token.</param>
         /// <returns>A task object handling the logic of fetching images.</returns>
         [HttpGet]
         [Route("fetchall/images")]
-        public async Task<IActionResult> FetchImagesAsync()
+        public async Task<IActionResult> FetchImagesAsync(string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             try
             {
                 var result = await this.databaseService.FetchImagesAsync();
@@ -109,11 +142,20 @@ namespace DSV_BackEnd.Controllers
         /// Fetches a single book from the database using the book's unique ID.
         /// </summary>
         /// <param name="bookID">The book ID.</param>
+        /// <param name="token">The authentication token.</param>
         /// <returns>A task handling the logic of fetching the book.</returns>
         [HttpGet]
         [Route("fetchsingle/book")]
-        public async Task<IActionResult> FetchSingleBookAsync(int bookID)
+        public async Task<IActionResult> FetchSingleBookAsync(int bookID, string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             try
             {
                 var result = await this.databaseService.FetchBookByID(bookID);
@@ -135,11 +177,20 @@ namespace DSV_BackEnd.Controllers
         /// Fetches a single article from the database using the article's unique ID.
         /// </summary>
         /// <param name="articleID">The article ID.</param>
+        /// <param name="token">The authentication token.</param>
         /// <returns>A task object handling the logic of fetching the article.</returns>
         [HttpGet]
         [Route("fetchsingle/article")]
-        public async Task<IActionResult> FetchSingleArticleAsync(int articleID)
+        public async Task<IActionResult> FetchSingleArticleAsync(int articleID, string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             try
             {
                 var result = await this.databaseService.FetchArticleByID(articleID);
@@ -161,11 +212,20 @@ namespace DSV_BackEnd.Controllers
         /// Fetches a single image based on its primary key, being the image name.
         /// </summary>
         /// <param name="imageName">The image name.</param>
+        /// <param name="token">The authentication token.</param>
         /// <returns>A task object handling the logic of fetching the image.</returns>
         [HttpGet]
         [Route("fetchsingle/image")]
-        public async Task<IActionResult> FetchSingleImageAsync(string imageName)
+        public async Task<IActionResult> FetchSingleImageAsync(string imageName, string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             if (imageName == null)
                 return BadRequest("Name of image to fetch was null.");
 
@@ -193,8 +253,16 @@ namespace DSV_BackEnd.Controllers
         /// <returns>An action result indicating whether the operation was a success.</returns>
         [HttpPost]
         [Route("persist/book")]
-        public async Task<IActionResult> PersistBookAsync([FromBody]Book book)
+        public async Task<IActionResult> PersistBookAsync([FromBody]Book book, string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             if (book == null)
                 return BadRequest("Book to persist was null.");
 
@@ -210,8 +278,16 @@ namespace DSV_BackEnd.Controllers
         /// <returns>An action result indicating whether the operation was a success.</returns>
         [HttpPost]
         [Route("persist/article")]
-        public async Task<IActionResult> PersistArticleAsync([FromBody]Article article)
+        public async Task<IActionResult> PersistArticleAsync([FromBody]Article article, string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             if (article == null)
                 return BadRequest("Article to persist was null.");
 
@@ -227,8 +303,16 @@ namespace DSV_BackEnd.Controllers
         /// <returns>A task handling the logic of saving the image.</returns>
         [HttpPost]
         [Route("upload/image")]
-        public async Task<IActionResult> UploadImageAsync([FromBody]Image image)
+        public async Task<IActionResult> UploadImageAsync([FromBody]Image image, string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             if (image == null)
                 return BadRequest("Image to upload was null.");
 
@@ -245,8 +329,16 @@ namespace DSV_BackEnd.Controllers
         /// <returns>A task handling the logic of modifying the book.</returns>
         [HttpPut]
         [Route("modify/book")]
-        public async Task<IActionResult> ModifyBookAsync(int bookID, [FromBody]Book updatedBook)
+        public async Task<IActionResult> ModifyBookAsync(int bookID, [FromBody]Book updatedBook, string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             if (updatedBook == null)
                 return BadRequest("Updated book must not be null.");
 
@@ -263,8 +355,16 @@ namespace DSV_BackEnd.Controllers
         /// <returns>A task handling the logic of modifying the article.</returns>
         [HttpPut]
         [Route("modify/article")]
-        public async Task<IActionResult> ModifyArticleAsync(int articleID, [FromBody]Article updatedArticle)
+        public async Task<IActionResult> ModifyArticleAsync(int articleID, [FromBody]Article updatedArticle, string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             if (updatedArticle == null)
                 return BadRequest("Updated book must not be null.");
 
@@ -281,8 +381,16 @@ namespace DSV_BackEnd.Controllers
         /// <returns>A task object handling the modification of the image data.</returns>
         [HttpPut]
         [Route("modify/image")]
-        public async Task<IActionResult> ModifyImageAsync(string imageName, [FromBody]string base64ImageData)
+        public async Task<IActionResult> ModifyImageAsync(string imageName, [FromBody]string base64ImageData, string token)
         {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            var authorized = await this.authService.AuthorizeRequestAsync(token);
+
+            if (!authorized)
+                return Unauthorized();
+
             if (imageName == null)
                 return BadRequest("Image name must not be null if you want to modify it.");
 

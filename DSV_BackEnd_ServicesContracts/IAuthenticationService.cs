@@ -9,6 +9,7 @@ namespace DSV_BackEnd_ServicesContracts
     using System;
     using System.Threading.Tasks;
     using DSV_BackEnd_DataLayer.DataModel;
+    using Shared;
 
     /// <summary>
     /// Represents a service capable of handling authentication and authorization.
@@ -18,24 +19,22 @@ namespace DSV_BackEnd_ServicesContracts
         /// <summary>
         /// Completes the registration of a new user asynchronously.
         /// </summary>
-        /// <param name="user">The user to register.</param>
+        /// <param name="userData">The user data containing the data of the user to register.</param>
         /// <returns>A task object handling the logic of registration.</returns>
         /// <exception cref="ArgumentNullException">
-        /// Is thrown if <paramref name="user"/> is null.
+        /// Is thrown if <paramref name="userData"/> is null.
         /// </exception>
-        Task<bool> CompleteRegistrationAsync(User user);
+        Task<bool> CompleteRegistrationAsync(UserDataDTO userData);
 
         /// <summary>
         /// Handles an authentication request based on a user's username and password hash combinations.
         /// </summary>
-        /// <param name="username">The username used for authentication.</param>
-        /// <param name="passwordHash">The password hash used for authentication.</param>
+        /// <param name="userData">The dto containing user data to authenticate.</param>
         /// <returns>A task object handling the logic of authenticating the user.</returns>
         /// <exception cref="ArgumentNullException">
-        /// Is thrown if <paramref name="passwordHash"/> is null.
-        /// Is thrown if <paramref name="username"/> is null.
+        /// Is thrown if <paramref name="userData"/> is null.
         /// </exception>
-        Task<bool> CompleteAuthenticationAsync(string username, string passwordHash);
+        Task<bool> CompleteAuthenticationAsync(UserDataDTO userData);
 
         /// <summary>
         /// Generates an authentication token and serializes it into a json object for further use.

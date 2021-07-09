@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DSV_BackEnd_DataLayer\DSV_BackEnd_DataLayer.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

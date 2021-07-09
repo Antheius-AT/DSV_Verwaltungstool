@@ -514,7 +514,7 @@ namespace DSV_Backend_ServiceLayer
             if (user == null)
                 throw new ArgumentNullException(nameof(user), "User must not be null.");
 
-            if (this.dbContext.Users.FirstOrDefaultAsync(p => p.Username == user.Username) != null)
+            if (await this.dbContext.Users.FirstOrDefaultAsync(p => p.Username == user.Username) != null)
                 return false;
 
             try
@@ -543,12 +543,14 @@ namespace DSV_Backend_ServiceLayer
         /// <exception cref="AssetNotFoundException">
         /// Is thrown if the specified user was not found.
         /// </exception>
-        public Task<User> RetrieveUserAsync(string username)
+        public async Task<User> RetrieveUserAsync(string username)
         {
             if (username == null)
                 throw new ArgumentNullException(nameof(username), "Username must not be null.");
 
-            throw new NotImplementedException();
+            var user = await this.dbContext.Users.FirstOrDefaultAsync(p => p.Username == username);
+
+            return user != null ? user : throw new AssetNotFoundException();
         }
     }
 }
