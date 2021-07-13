@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSV_BackEnd_DataLayer", "DS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSV_BackEnd_ServicesContracts", "DSV_BackEnd_ServicesContracts\DSV_BackEnd_ServicesContracts.csproj", "{A90CC0E6-4BDA-4158-BCFA-1CA3B525A578}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{4AEAAD7B-4DD0-4A4A-9AD9-F4162B66CB6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedDefinitions", "Shared\SharedDefinitions.csproj", "{4AEAAD7B-4DD0-4A4A-9AD9-F4162B66CB6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSV_Frontend", "DSV_Frontend\DSV_Frontend.csproj", "{55C6006F-C27B-4014-95F7-5BA2DF00BF14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSV_Frontend", "DSV_Frontend\DSV_Frontend.csproj", "{55C6006F-C27B-4014-95F7-5BA2DF00BF14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

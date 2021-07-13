@@ -7,11 +7,13 @@
 namespace DSV_BackEnd.Controllers
 {
     using System;
+    using System.Security;
     using System.Threading.Tasks;
     using DSV_BackEnd_ServicesContracts;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using Shared;
+    using SharedDefinitions;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -75,6 +77,30 @@ namespace DSV_BackEnd.Controllers
                 this.authControllerLoggerService.LogError($"Server error while trying to serialize token.");
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet]
+        [Route("verifytoken")]
+        public async Task<IActionResult> VerifyTokenAsync(string token)
+        {
+            if (token == null)
+                return BadRequest();
+
+            var verified = await this.authService.AuthorizeRequestAsync(token);
+
+            return verified ? Ok() : StatusCode(401);
+        }
+
+        [HttpGet]
+        [Route("refreshtoken")]
+        public async Task<IActionResult> RefreshToken(string token)
+        {
+            if (token == null)
+                return BadRequest();
+
+            var newToken = await this.authService.RefreshAuthenticationTokenAsync(token);
+
+            return Content(newToken);
         }
     }
 }

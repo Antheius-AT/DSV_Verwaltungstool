@@ -1,7 +1,47 @@
 ﻿@page "/"
+@inject DSV_Frontend.Services.IRouteGuardService routeGuardService;
+@inject DSV_Frontend.Services.IAuthenticationService authService;
+@inject NavigationManager NavigationManager;
 
-<h1>Hello, world!</h1>
+@if (this.isAuthenticated)
+{
+    <h1>Authenticated</h1>
+}
+else
+{
+  
+    <RadzenTextBox @bind-Value="username"></RadzenTextBox>
+    <RadzenPassword @bind-Value="password"></RadzenPassword>
+    <RadzenButton Click="@ExecuteLogin">Login</RadzenButton>
 
-Welcome to your new app.
+    <h1>Not authenticated</h1>
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code{
+    private bool isAuthenticated;
+    private string username;
+    private string password;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.isAuthenticated = await this.routeGuardService.VerifySecurityToken();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task ExecuteLogin()
+    {
+        var userData = new SharedDefinitions.UserDataDTO();
+        userData.Username = this.username;
+        userData.PasswordHash = this.password;
+
+        var response = await this.authService.AuthenticateAsync(userData);
+
+        if (response.IsSuccess)
+        {
+            this.routeGuardService.UserToken = response.Data;
+            this.NavigationManager.NavigateTo("/home");
+        }
+    }
+}

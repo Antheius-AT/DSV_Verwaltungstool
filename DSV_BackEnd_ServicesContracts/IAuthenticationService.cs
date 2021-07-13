@@ -9,7 +9,7 @@ namespace DSV_BackEnd_ServicesContracts
     using System;
     using System.Threading.Tasks;
     using DSV_BackEnd_DataLayer.DataModel;
-    using Shared;
+    using SharedDefinitions;
 
     /// <summary>
     /// Represents a service capable of handling authentication and authorization.

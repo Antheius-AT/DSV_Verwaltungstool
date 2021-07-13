@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DSV_Frontend.Services;
+using DSV_Frontend.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,8 +28,15 @@ namespace DSV_Frontend
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddServerSideBlazor();
+            services.AddCors();
+
+            services.AddTransient<IAuthenticationService, JWTAuthenticationService>();
+            services.AddHttpClient<IWebResourceRequestService, HttpRequestService>();
+
+            services.AddSingleton<AppState>();
+            services.AddSingleton<IRouteGuardService, JWTRouteGuardService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +53,7 @@ namespace DSV_Frontend
                 app.UseHsts();
             }
 
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

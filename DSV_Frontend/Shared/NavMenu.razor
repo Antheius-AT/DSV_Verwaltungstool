@@ -1,4 +1,7 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@inject DSV_Frontend.Services.IRouteGuardService routeGuardService;
+@inject AppState appState;
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">DSV_Frontend</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -9,19 +12,22 @@
     <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-account-login" aria-hidden="@(!this.isVerified)"></span> Login
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </li>
+        @if (this.isVerified)
+        {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="fetchdata">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="logout">
+                    <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+                </NavLink>
+            </li>
+        }
     </ul>
 </div>
 
@@ -30,8 +36,23 @@
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    private bool isVerified;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.isVerified = await this.routeGuardService.VerifySecurityToken();
+        this.appState.StateChanged += this.HandleAppStateChanged;
+
+        await base.OnInitializedAsync();
+    }
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private void HandleAppStateChanged(object source, EventArgs empty)
+    {
+        this.OnAfterRender(false);
     }
 }

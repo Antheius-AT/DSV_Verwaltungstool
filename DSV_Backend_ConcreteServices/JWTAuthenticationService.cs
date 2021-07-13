@@ -16,7 +16,7 @@ namespace DSV_Backend_ServiceLayer
     using JWT.Exceptions;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-    using Shared;
+    using SharedDefinitions;
 
     /// <summary>
     /// Represent an authentication service using JWT as its method of authentication and authorization.

@@ -58,6 +58,7 @@ namespace DSV_BackEnd
                 options.RoutePrefix = string.Empty;
             });
 
+            app.UseCors();
             app.UseHttpsRedirection();
 
             app.UseRouting();
