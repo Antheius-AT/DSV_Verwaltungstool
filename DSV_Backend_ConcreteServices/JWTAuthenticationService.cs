@@ -7,16 +7,20 @@
 namespace DSV_Backend_ServiceLayer
 {
     using System;
+    using System.Net;
     using System.Threading.Tasks;
     using DSV_BackEnd_DataLayer.DataModel;
     using DSV_BackEnd_ServicesContracts;
     using DSV_BackEnd_ServicesContracts.ServiceExceptions;
+    using JWT;
     using JWT.Algorithms;
     using JWT.Builder;
     using JWT.Exceptions;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using SharedDefinitions;
+    using SharedDefinitions.DTOs;
+    using SharedDefinitions.Services;
 
     /// <summary>
     /// Represent an authentication service using JWT as its method of authentication and authorization.
@@ -38,11 +42,28 @@ namespace DSV_Backend_ServiceLayer
         /// </summary>
         private ILogger<JWTAuthenticationService> authServiceLogger;
 
-        public JWTAuthenticationService(IDatabaseService databaseService, ILogger<JWTAuthenticationService> authServiceLogger, IConfiguration configuration)
+        /// <summary>
+        /// Serialization service capable of serializing and deserializing objects into string format.
+        /// </summary>
+        private IObjectSerializationService serializationService;
+
+        /// <summary>
+        /// Represents a token store service capable of storing tokens.
+        /// </summary>
+        private IAuthenticationTokenStore tokenStore;
+
+        public JWTAuthenticationService
+            (IDatabaseService databaseService, 
+            ILogger<JWTAuthenticationService> authServiceLogger, 
+            IConfiguration configuration, 
+            IObjectSerializationService serializationService,
+            IAuthenticationTokenStore tokenStore)
         {
             this.databaseService = databaseService;
             this.authServiceLogger = authServiceLogger;
             this.secret = configuration["SECRET"];
+            this.serializationService = serializationService;
+            this.tokenStore = tokenStore;
         }
 
         /// <summary>
@@ -53,32 +74,44 @@ namespace DSV_Backend_ServiceLayer
         /// <exception cref="ArgumentNullException">
         /// Is thrown if <paramref name="authorizationHeader"/> is null.
         /// </exception>
-        public Task<bool> AuthorizeRequestAsync(string authorizationHeader)
+        /// <exception cref="ArgumentException">
+        /// Is thrown if the token stored in <paramref name="authorizationHeader"/> is not known to the application.
+        /// </exception>
+        public async Task<bool> AuthorizeRequestAsync(string authorizationHeader)
         {
             if (authorizationHeader == null)
                 throw new ArgumentNullException(nameof(authorizationHeader), "Authorization header must not be null.");
 
             try
             {
+                if (!await this.tokenStore.DoesValueExist(authorizationHeader))
+                    throw new ArgumentException(nameof(authorizationHeader), "Specified token was unknown.");
+
                 JwtBuilder.Create()
                     .WithAlgorithm(new HMACSHA256Algorithm())
                     .WithSecret(this.secret)
                     .MustVerifySignature()
                     .Decode(authorizationHeader);
 
-                return Task.FromResult(true);
+                return true;
             }
             catch (TokenExpiredException)
             {
                 this.authServiceLogger.LogError($"User attempted to authorize a request using an expired token.");
 
-                return Task.FromResult(false);
+                return false;
+            }
+            catch (ArgumentException)
+            {
+                this.authServiceLogger.LogInformation($"User attempted to authorize request using unknown token.");
+
+                return false;
             }
             catch (Exception)
             {
                 this.authServiceLogger.LogError($"Token specified in authorization request was invalid.");
 
-                return Task.FromResult(false);
+                return false;
             }
         }
 
@@ -141,7 +174,10 @@ namespace DSV_Backend_ServiceLayer
         /// <exception cref="ArgumentNullException">
         /// Is thrown if <paramref name="username"/> is null.
         /// </exception>
-        public Task<string> GenerateAuthenticationTokenAsync(string username)
+        /// <exception cref="InvalidOperationException">
+        /// Is thrown if the username <paramref name="username"/> is already used as a token key in the <see cref="IAuthenticationTokenStore"/> store.
+        /// </exception>
+        public async Task<string> GenerateAuthenticationTokenAsync(string username)
         {
             if (username == null)
                 throw new ArgumentNullException(nameof(username), "Username to generate a token for must not be null.");
@@ -153,7 +189,12 @@ namespace DSV_Backend_ServiceLayer
                 .ExpirationTime(DateTime.UtcNow.AddMinutes(30))
                 .Encode();
 
-            return Task.FromResult(token);
+            if (await this.tokenStore.ContainsKeyAsync(username))
+                throw new InvalidOperationException($"Cant store entry because username {username} is already used as a key.");
+
+            await this.tokenStore.StoreAsync(username, token);
+
+            return token;
         }
 
         /// <summary>
@@ -166,10 +207,92 @@ namespace DSV_Backend_ServiceLayer
         /// </exception>
         /// <exception cref="ArgumentException">
         /// Is thrown if <paramref name="oldToken"/> already expired.
+        /// Is also thrown if <paramref name="oldToken"/> does not contain a name field.
         /// </exception>
-        public Task<string> RefreshAuthenticationTokenAsync(string oldToken)
+        public async Task<string> RefreshAuthenticationTokenAsync(string oldToken)
         {
-            throw new NotImplementedException();
+            if (oldToken == null)
+                throw new ArgumentNullException(nameof(oldToken), "Old token must not be null.");
+
+            if (!await this.AuthorizeRequestAsync(oldToken))
+                throw new ArgumentException(nameof(oldToken), "Token already expired");
+
+            var decodedToken = JwtBuilder.Create().Decode(oldToken);
+            var jwtDto = await this.serializationService.DeserializeMessageAsync<JWTWrapperDTO>(decodedToken);
+
+            if (jwtDto.Name == null)
+                throw new ArgumentException("token missing name field.");
+
+            await this.NullifyTokenValidityAsync(decodedToken);
+            var newlyIssuedToken = await this.GenerateAuthenticationTokenAsync(jwtDto.Name);
+
+            return newlyIssuedToken;
+        }
+
+        /// <summary>
+        /// Nullifies a json web tokens validity.
+        /// </summary>
+        /// <param name="token">The json web token to nullify.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="token"/> is null.
+        /// </exception>
+        private async Task NullifyTokenValidityAsync(string token)
+        {
+            if (token == null)
+                throw new ArgumentNullException(nameof(token), "Token must not be null.");
+
+            var tokenDto = await this.serializationService.DeserializeMessageAsync<JWTWrapperDTO>(token);
+
+            if (tokenDto.Name != null)
+            {
+                var contains = await this.tokenStore.ContainsKeyAsync(tokenDto.Name);
+
+                if (contains)
+                    await this.tokenStore.RemoveByKeyAsync(tokenDto.Name);
+            }
+        }
+
+        /// <summary>
+        /// Decodes a json web token.
+        /// </summary>
+        /// <param name="token">The token to decode.</param>
+        /// <returns>The decoded token.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="token"/> is null.
+        /// </exception>
+        private string DecodeToken(string token)
+        {
+            if (token == null)
+                throw new ArgumentNullException(nameof(token), "Token to decode must not be null.");
+
+            return JwtBuilder.Create().Decode(token);
+        }
+
+        /// <summary>
+        /// Logs out by removing all references to the specified username and token.
+        /// </summary>
+        /// <param name="username">The username of the user logging out.</param>
+        /// <param name="token">The current authentication token of the user.</param>
+        /// <returns>An empty task object.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="token"/> is null.
+        /// Is thrown if <paramref name="username"/> is null.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Is thrown if the user trying to log out is not logged in currently.
+        /// </exception>
+        public async Task LogoutAsync(string username, string token)
+        {
+            if (username == null)
+                throw new ArgumentNullException(nameof(username), "Username must not be null.");
+
+            if (token == null)
+                throw new ArgumentNullException(nameof(token), "Token must not be null.");
+
+            if (!await AuthorizeRequestAsync(token) || !await tokenStore.ContainsKeyAsync(username))
+                throw new InvalidOperationException("Can not log out user because user is not logged in.");
+
+            await this.tokenStore.RemoveByKeyAsync(username);
         }
     }
 }

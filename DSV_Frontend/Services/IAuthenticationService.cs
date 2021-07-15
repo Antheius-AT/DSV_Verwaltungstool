@@ -8,7 +8,7 @@ namespace DSV_Frontend.Services
 {
     using System.Threading.Tasks;
     using DSV_Frontend.Data;
-    using SharedDefinitions;
+    using SharedDefinitions.DTOs;
 
     /// <summary>
     /// Represents a service used for authenticating with the back end server.

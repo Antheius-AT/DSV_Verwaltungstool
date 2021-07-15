@@ -7,12 +7,12 @@
 namespace DSV_BackEnd.Controllers
 {
     using System;
-    using System.Buffers.Text;
     using System.Threading.Tasks;
     using DSV_BackEnd_DataLayer.DataModel;
     using DSV_BackEnd_ServicesContracts;
     using DSV_BackEnd_ServicesContracts.ServiceExceptions;
     using Microsoft.AspNetCore.Mvc;
+    using SharedDefinitions.Services;
 
     /// <summary>
     /// Controller serving as an endpoint for requesting and submitting data from and to the database.

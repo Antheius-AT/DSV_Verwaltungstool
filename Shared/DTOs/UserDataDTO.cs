@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Gregor Faiman</author>
 //-----------------------------------------------------------------------
-namespace SharedDefinitions
+namespace SharedDefinitions.DTOs
 {
     /// <summary>
     /// Represents a dto containing user data.

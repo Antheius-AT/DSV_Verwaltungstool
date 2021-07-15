@@ -8,7 +8,7 @@ namespace DSV_Backend_ServiceLayer
 {
     using System;
     using System.Threading.Tasks;
-    using DSV_BackEnd_ServicesContracts;
+    using SharedDefinitions.Services;
     using DSV_BackEnd_ServicesContracts.ServiceExceptions;
     using Newtonsoft.Json;
 

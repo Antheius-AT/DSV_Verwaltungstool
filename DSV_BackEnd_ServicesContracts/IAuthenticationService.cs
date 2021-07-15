@@ -8,8 +8,7 @@ namespace DSV_BackEnd_ServicesContracts
 {
     using System;
     using System.Threading.Tasks;
-    using DSV_BackEnd_DataLayer.DataModel;
-    using SharedDefinitions;
+    using SharedDefinitions.DTOs;
 
     /// <summary>
     /// Represents a service capable of handling authentication and authorization.
@@ -44,6 +43,9 @@ namespace DSV_BackEnd_ServicesContracts
         /// <exception cref="ArgumentNullException">
         /// Is thrown if <paramref name="username"/> is null.
         /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Is thrown if the specified <paramref name="username"/> is already used as a token key in the underlying <see cref="IAuthenticationTokenStore"/>.
+        /// </exception>
         Task<string> GenerateAuthenticationTokenAsync(string username);
 
         /// <summary>
@@ -54,6 +56,10 @@ namespace DSV_BackEnd_ServicesContracts
         /// <exception cref="ArgumentNullException">
         /// Is thrown if <paramref name="oldToken"/> is null.
         /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Is thrown if <paramref name="oldToken"/> already expired.
+        /// Is also thrown if <paramref name="oldToken"/> does not contain a name claim.
+        /// </exception>
         Task<string> RefreshAuthenticationTokenAsync(string oldToken);
 
         /// <summary>
@@ -62,5 +68,20 @@ namespace DSV_BackEnd_ServicesContracts
         /// <param name="authorizationHeader">The data containing authorization data, such as authentication tokens.</param>
         /// <returns>A task object handling the logic of authorizing the request.</returns>
         Task<bool> AuthorizeRequestAsync(string authorizationHeader);
+
+        /// <summary>
+        /// Logs out by removing all references to the specified username and token.
+        /// </summary>
+        /// <param name="username">The username of the user logging out.</param>
+        /// <param name="token">The current authentication token of the user.</param>
+        /// <returns>An empty task object.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="token"/> is null.
+        /// Is thrown if <paramref name="username"/> is null.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Is thrown if the user trying to log out is not logged in currently.
+        /// </exception>
+        Task LogoutAsync(string username, string token);
     }
 }

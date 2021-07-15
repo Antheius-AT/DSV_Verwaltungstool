@@ -4,11 +4,11 @@
 // </copyright>
 // <author>Gregor Faiman</author>
 //-----------------------------------------------------------------------
-namespace DSV_BackEnd_ServicesContracts
+namespace SharedDefinitions.Services
 {
     using System;
     using System.Threading.Tasks;
-    using ServiceExceptions;
+    using SharedDefinitions.Exceptions;
 
     /// <summary>
     /// Represents an abstract service capable of serializing objects to and from string format.

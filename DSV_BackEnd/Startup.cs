@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SharedDefinitions.Services;
 
 namespace DSV_BackEnd
 {
@@ -37,6 +38,8 @@ namespace DSV_BackEnd
             services.AddTransient<IDatabaseService, SQLServerDatabaseService>();
             services.AddTransient<IObjectSerializationService, JSONSerializationService>();
             services.AddTransient<IAuthenticationService, JWTAuthenticationService>();
+
+            services.AddSingleton<IAuthenticationTokenStore, DictionaryTokenStore>();
 
             services.AddLogging();
             services.AddSwaggerGen();

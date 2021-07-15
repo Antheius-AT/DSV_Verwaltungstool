@@ -11,7 +11,7 @@ namespace DSV_Frontend.Services
     using System.Threading.Tasks;
     using DSV_Frontend.Data;
     using Microsoft.Extensions.Configuration;
-    using SharedDefinitions;
+    using SharedDefinitions.DTOs;
 
     /// <summary>
     /// Represents an authentication service using JWT.

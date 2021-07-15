@@ -7,13 +7,12 @@
 namespace DSV_BackEnd.Controllers
 {
     using System;
-    using System.Security;
     using System.Threading.Tasks;
     using DSV_BackEnd_ServicesContracts;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using SharedDefinitions;
+    using SharedDefinitions.DTOs;
+    using SharedDefinitions.Services;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -68,9 +67,14 @@ namespace DSV_BackEnd.Controllers
             try
             {
                 var token = await this.authService.GenerateAuthenticationTokenAsync(userDataDTO.Username);
-                var serializedToken = await this.serializationService.SerializeMessageAsync(token);
 
-                return Content(serializedToken);
+                return Content(token);
+            }
+            catch (InvalidOperationException)
+            {
+                this.authControllerLoggerService.LogError($"Token could not be created because username {userDataDTO.Username} was already used as a token key.");
+
+                return BadRequest("User is already authenticated.");
             }
             catch (Exception)
             {
@@ -98,9 +102,54 @@ namespace DSV_BackEnd.Controllers
             if (token == null)
                 return BadRequest();
 
-            var newToken = await this.authService.RefreshAuthenticationTokenAsync(token);
+            try
+            {
+                var newToken = await this.authService.RefreshAuthenticationTokenAsync(token);
 
-            return Content(newToken);
+                return Content(newToken);
+            }
+            catch (ArgumentException)
+            {
+                this.authControllerLoggerService.LogError("User attempted to refresh token without the token containing a name field.");
+
+                return BadRequest("Specified token was invalid.");
+            }
+            catch (Exception e)
+            {
+                this.authControllerLoggerService.LogError("Internal server error occurred while refreshing token.", e);
+
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Route("logout")]
+        public async Task<IActionResult> LogOut(string username, string token)
+        {
+            if (username == null)
+                return BadRequest("Username must not be null on logout.");
+
+            if (token == null)
+                return BadRequest("Token must not be null on logout");
+
+            try
+            {
+                await this.authService.LogoutAsync(username, token);
+
+                return Ok();
+            }
+            catch (InvalidOperationException)
+            {
+                this.authControllerLoggerService.LogInformation($"User with username {username} attempted to log out despite not being logged in.");
+
+                return BadRequest("Can not logout if you are not logged in.");
+            }
+            catch (Exception e)
+            {
+                this.authControllerLoggerService.LogError($"Some error occurred during logging out of user.", e);
+
+                return StatusCode(500);
+            }
         }
     }
 }
