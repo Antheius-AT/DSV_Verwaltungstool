@@ -1,20 +1,17 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="JSONSerializationService.cs" company="FSolutions">
-//     Copyright (c) FSolutions. All rights reserved.
+// <copyright file="Book.cs" company="FPSolutions">
+//     Copyright (c) FPSolutions. All rights reserved.
 // </copyright>
 // <author>Gregor Faiman</author>
 //-----------------------------------------------------------------------
-namespace DSV_Backend_ServiceLayer
+namespace DSV_Frontend.Services
 {
     using System;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using SharedDefinitions.Services;
     using SharedDefinitions.Exceptions;
-    using Newtonsoft.Json;
 
-    /// <summary>
-    /// Represents a service capable of serializing objets to and from JSON.
-    /// </summary>
     public class JSONSerializationService : IObjectSerializationService
     {
         /// <summary>

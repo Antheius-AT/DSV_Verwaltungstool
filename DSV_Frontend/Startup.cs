@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SharedDefinitions.Services;
 
 namespace DSV_Frontend
 {
@@ -32,6 +33,7 @@ namespace DSV_Frontend
             services.AddServerSideBlazor();
             services.AddCors();
 
+            services.AddTransient<IObjectSerializationService, JSONSerializationService>();
             services.AddTransient<IAuthenticationService, JWTAuthenticationService>();
             services.AddHttpClient<IWebResourceRequestService, HttpRequestService>();
 
