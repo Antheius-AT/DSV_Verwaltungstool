@@ -23,7 +23,7 @@ namespace SharedDefinitions.DTOs
         /// <summary>
         /// Gets or sets the user's password hash.
         /// </summary>
-        public string PasswordHash
+        public string Password
         {
             get;
             set;

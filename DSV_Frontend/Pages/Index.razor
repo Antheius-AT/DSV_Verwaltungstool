@@ -34,7 +34,7 @@ else
     {
         var userData = new SharedDefinitions.DTOs.UserDataDTO();
         userData.Username = this.username;
-        userData.PasswordHash = this.password;
+        userData.Password = this.password;
 
         var response = await this.authService.AuthenticateAsync(userData);
 

@@ -8,6 +8,8 @@ namespace DSV_Backend_ServiceLayer
 {
     using System;
     using System.Net;
+    using System.Security.Cryptography;
+    using System.Text;
     using System.Threading.Tasks;
     using DSV_BackEnd_DataLayer.DataModel;
     using DSV_BackEnd_ServicesContracts;
@@ -132,8 +134,9 @@ namespace DSV_Backend_ServiceLayer
             try
             {
                 var user = await this.databaseService.RetrieveUserAsync(userData.Username);
+                var passwordHash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(userData.Password));
 
-                return user.PasswordHash == userData.PasswordHash;
+                return user.PasswordHash == Encoding.UTF8.GetString(passwordHash);
             }
             catch (AssetNotFoundException)
             {
@@ -157,9 +160,11 @@ namespace DSV_Backend_ServiceLayer
             if (userData == null)
                 throw new ArgumentNullException(nameof(userData), "User data must not be null.");
 
+            var passwordHash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(userData.Password));
+
             var user = new User();
             user.Username = userData.Username;
-            user.PasswordHash = userData.PasswordHash;
+            user.PasswordHash = Encoding.UTF8.GetString(passwordHash);
 
             var result = await this.databaseService.PersistUserAsync(user);
 

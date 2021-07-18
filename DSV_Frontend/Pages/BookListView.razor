@@ -20,7 +20,7 @@
             this.NavigationManager.NavigateTo("/");
         else
         {
-            var response = await this.resourceRequestService.GetResourceAsync(string.Concat(this.configuration["BASEURI"], "api/", "DataQuery/", "fetchall/", "books"), null);
+            var response = await this.resourceRequestService.GetResourceAsync(string.Concat(this.configuration["BASEURI"], "api/", "DataQuery/", "fetchall/", "books"));
 
             if (response.IsSuccess)
                 this.BookData = await this.serializationService.DeserializeMessageAsync<List<SharedDefinitions.DTOs.BookDataDTO>>(response.Data);
