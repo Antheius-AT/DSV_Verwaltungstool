@@ -1,0 +1,30 @@
+﻿@page "/login"
+
+<RadzenCard>
+    <RadzenTemplateForm Data=@("LoginWithRegister")>
+        <RadzenLogin AllowResetPassword="false"
+                     LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort" RegisterText="Registrieren"
+                     UserRequired="Benutzername erforderlich" PasswordRequired="Passwort erforderlich"
+                     RegisterMessageText="Sie haben noch keinen Account?"
+                     Login=@(args => OnLogin(args, "Login with register"))
+                     Register=@(args => OnRegister("Login with register"))
+                     Style="margin-bottom: 20px;" />
+    </RadzenTemplateForm>
+</RadzenCard>
+
+
+
+@code {
+
+
+    void OnLogin(LoginArgs args, string name)
+    {
+        Console.WriteLine($"{name} -> Username: {args.Username} and password: {args.Password}");
+    }
+
+    void OnRegister(string name)
+    {
+        Console.WriteLine($"{name} -> Register");
+    }
+
+}
