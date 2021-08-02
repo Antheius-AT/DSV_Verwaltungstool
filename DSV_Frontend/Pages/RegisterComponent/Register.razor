@@ -1,7 +1,59 @@
-﻿<h3>Register</h3>
+﻿@page "/register"
+
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using Models.Account; 
 
 
+<div class="col-xl-5">
+    <div style="margin-bottom:32px">
+        <h3>Registrierung</h3>
+    </div>
+        <RadzenTemplateForm TItem="RegistrationArgs" Data=@RegistrationArgs Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+            <RadzenFieldset Text="Persönliche Daten">
+                <div class="row" style="margin-bottom: 48px ">
+                    <div class="col-md-3">
+                        <RadzenLabel Text="Benutzername" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenTextBox style="display: block;" Name="Benutzername" @bind-Value=@RegistrationArgs.Username />
+                        <RadzenRequiredValidator Component="Benutzername" Text="Benutzername erforderlich" Popup="true" Style="position: absolute" />
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 48px">
+                    <div class="col-md-3">
+                        <RadzenLabel Text="E-Mail Adresse" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenTextBox style="display: block" Name="EMail" @bind-Value=@RegistrationArgs.EMail />
+                        <RadzenRequiredValidator Component="EMail" Text="E-Mail Adresse erforderlich" Popup="true" Style="position: absolute" />
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 48px ">
+                    <div class="col-md-3">
+                        <RadzenLabel Text="Passwort" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenTextBox style="display: block" Name="Passwort" @bind-Value=@RegistrationArgs.Password />
+                        <RadzenRequiredValidator Component="Passwort" Text="Passwort erforderlich" Popup="true" Style="position: absolute" />
+                    </div>
+                </div>
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Registrieren"></RadzenButton>
+            </RadzenFieldset>
+        </RadzenTemplateForm>
+</div>
 
 @code {
 
+    public RegistrationArgs RegistrationArgs { get; set; } = new RegistrationArgs();
+
+    void OnSubmit(RegistrationArgs args)
+    {
+        Console.WriteLine($"Submit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
+    }
+
+    void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+    {
+        Console.WriteLine($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
+    }
 }
