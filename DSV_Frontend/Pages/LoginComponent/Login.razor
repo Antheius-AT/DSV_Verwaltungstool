@@ -1,30 +1,34 @@
 ﻿@page "/login"
+@inject NavigationManager NavigationManager
+@using System.Text.Json
 
-<RadzenCard>
-    <RadzenTemplateForm Data=@("LoginWithRegister")>
-        <RadzenLogin AllowResetPassword="false"
-                     LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort" RegisterText="Registrieren"
-                     UserRequired="Benutzername erforderlich" PasswordRequired="Passwort erforderlich"
-                     RegisterMessageText="Sie haben noch keinen Account?"
-                     Login=@(args => OnLogin(args, "Login with register"))
-                     Register=@(args => OnRegister("Login with register"))
-                     Style="margin-bottom: 20px;" />
-    </RadzenTemplateForm>
-</RadzenCard>
-
+<div class="row">
+    <div class="col-xl-5">
+        <h3>Einloggen</h3>
+        <RadzenCard>
+            <RadzenTemplateForm Data=@("")>
+                <RadzenLogin AllowResetPassword="false"
+                             LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort" RegisterText="Registrieren"
+                             UserRequired="Benutzername erforderlich" PasswordRequired="Passwort erforderlich"
+                             RegisterMessageText="Sie haben noch keinen Account?"
+                             Login=@(args => OnLogin(args))
+                             Register=@(args => OnRegister())
+                             Style="margin-bottom: 20px;" />
+            </RadzenTemplateForm>
+        </RadzenCard>
+    </div>
+</div>
 
 
 @code {
 
-
-    void OnLogin(LoginArgs args, string name)
+    void OnLogin(LoginArgs args)
     {
-        Console.WriteLine($"{name} -> Username: {args.Username} and password: {args.Password}");
+        Console.WriteLine($"Submit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
     }
 
-    void OnRegister(string name)
+    void OnRegister()
     {
-        Console.WriteLine($"{name} -> Register");
+        NavigationManager.NavigateTo("/register");
     }
-
 }
