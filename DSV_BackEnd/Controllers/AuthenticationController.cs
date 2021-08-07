@@ -122,25 +122,28 @@ namespace DSV_BackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("logout")]
-        public async Task<IActionResult> LogOut(string username, string token)
+        public async Task<IActionResult> LogOut(LogoutDTO logoutDTO)
         {
-            if (username == null)
+            if (logoutDTO == null)
+                return BadRequest("Logout DTO must not be null if you want to log out.");
+
+            if (logoutDTO.Username == null)
                 return BadRequest("Username must not be null on logout.");
 
-            if (token == null)
+            if (logoutDTO.AuthenticationToken == null)
                 return BadRequest("Token must not be null on logout");
 
             try
             {
-                await this.authService.LogoutAsync(username, token);
+                await this.authService.LogoutAsync(logoutDTO.Username, logoutDTO.AuthenticationToken);
 
                 return Ok();
             }
             catch (InvalidOperationException)
             {
-                this.authControllerLoggerService.LogInformation($"User with username {username} attempted to log out despite not being logged in.");
+                this.authControllerLoggerService.LogInformation($"User with username {logoutDTO.Username} attempted to log out despite not being logged in.");
 
                 return BadRequest("Can not logout if you are not logged in.");
             }

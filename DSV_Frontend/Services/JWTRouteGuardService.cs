@@ -7,6 +7,7 @@
 namespace DSV_Frontend.Services
 {
     using System.Threading.Tasks;
+    using DSV_Frontend.Shared;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -18,10 +19,13 @@ namespace DSV_Frontend.Services
 
         private IConfiguration configuration;
 
-        public JWTRouteGuardService(IWebResourceRequestService webRequestService, IConfiguration configuration)
+        private AppState appState;
+
+        public JWTRouteGuardService(IWebResourceRequestService webRequestService, IConfiguration configuration, AppState appState)
         {
             this.webRequestService = webRequestService;
             this.configuration = configuration;
+            this.appState = appState;
         }
 
         /// <summary>
@@ -35,7 +39,7 @@ namespace DSV_Frontend.Services
         /// <returns>A value indicating whether the security token found in <see cref="UserToken"/> is valid.</returns>
         public async Task<bool> VerifySecurityToken()
         {
-            var webResponse = await this.webRequestService.GetResourceAsync(string.Concat(this.configuration["BASEURI"], "api/", "authentication/", "verifytoken"));
+            var webResponse = await this.webRequestService.GetResourceAsync(string.Concat(this.configuration["BASEURI"], "api/", "authentication/", "verifytoken?", "token=", $"{this.appState.AuthenticationToken}"));
 
             return webResponse.IsSuccess;
         }

@@ -7,9 +7,9 @@
 namespace DSV_Frontend.Services
 {
     using System;
-    using System.Net.Http;
     using System.Threading.Tasks;
     using DSV_Frontend.Data;
+    using DSV_Frontend.Shared;
     using Microsoft.Extensions.Configuration;
     using SharedDefinitions.DTOs;
 
@@ -28,10 +28,16 @@ namespace DSV_Frontend.Services
         /// </summary>
         private IConfiguration configuration;
 
-        public JWTAuthenticationService(IWebResourceRequestService webRequestService, IConfiguration configuration)
+        /// <summary>
+        /// Represents the current application state.
+        /// </summary>
+        private AppState appState;
+
+        public JWTAuthenticationService(IWebResourceRequestService webRequestService, IConfiguration configuration, AppState appState)
         {
             this.webRequestService = webRequestService;
             this.configuration = configuration;
+            this.appState = appState;
         }
 
         /// <summary>
@@ -50,6 +56,30 @@ namespace DSV_Frontend.Services
             var result = await this.webRequestService.SubmitResourceAsync<UserDataDTO>(string.Concat(this.configuration["BASEURI"], "api/", "authentication/", "authenticate"), userData);
 
             return result;
+        }
+
+        /// <summary>
+        /// Sends a request to the remote endpoint to log out the specified user.
+        /// </summary>
+        /// <param name="username">The specified user.</param>
+        /// <returns>A value indicating whether the log out was successful.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Is thrown if <paramref name="username"/> is null.
+        /// </exception>
+        public async Task<bool> LogoutAsync(string username)
+        {
+            if (username == null)
+                throw new ArgumentNullException(nameof(username), "Username must not be null.");
+
+            var logoutDTO = new LogoutDTO()
+            {
+                Username = username,
+                AuthenticationToken = this.appState.AuthenticationToken
+            };
+
+            var response = await this.webRequestService.SubmitResourceAsync(string.Concat(this.configuration["BASEURI"], "api/", "authentication/", "logout"), logoutDTO);
+
+            return response.IsSuccess;
         }
 
         public Task<WebResourceResponse> RefreshTokenAsync(string token)

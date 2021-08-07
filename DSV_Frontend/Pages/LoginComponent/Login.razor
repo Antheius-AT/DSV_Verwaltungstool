@@ -1,6 +1,9 @@
 ﻿@page "/login"
+
+@inject DSV_Frontend.Services.IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
-@using System.Text.Json
+@inject DSV_Frontend.Services.IRouteGuardService RouteGuardService
+@inject AppState AppState
 
 <div class="row">
     <div class="col-xl-5">
@@ -22,9 +25,24 @@
 
 @code {
 
-    void OnLogin(LoginArgs args)
+    async Task OnLogin(LoginArgs args)
     {
-        Console.WriteLine($"Submit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
+        var userDataDto = new SharedDefinitions.DTOs.UserDataDTO();
+        userDataDto.Username = args.Username;
+        userDataDto.Password = args.Password;
+
+        Console.WriteLine(this.RouteGuardService.UserToken);
+
+        var response = await this.AuthenticationService.AuthenticateAsync(userDataDto);
+
+        if (response.IsSuccess)
+        {
+            this.AppState.AuthenticationToken = response.Data;
+            this.AppState.IsAuthenticated = true;
+            this.AppState.Username = userDataDto.Username;
+            this.AppState.RaiseStateChanged();
+            this.NavigationManager.NavigateTo("/");
+        }
     }
 
     void OnRegister()

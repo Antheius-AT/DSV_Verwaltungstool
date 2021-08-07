@@ -195,7 +195,8 @@ namespace DSV_Backend_ServiceLayer
                 .Encode();
 
             if (await this.tokenStore.ContainsKeyAsync(username))
-                throw new InvalidOperationException($"Cant store entry because username {username} is already used as a key.");
+                return token;
+                //throw new InvalidOperationException($"Cant store entry because username {username} is already used as a key.");
 
             await this.tokenStore.StoreAsync(username, token);
 
