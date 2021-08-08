@@ -1,5 +1,7 @@
-﻿@inject DSV_Frontend.Services.IRouteGuardService routeGuardService;
-@inject AppState appState;
+﻿@inject DSV_Frontend.Services.IRouteGuardService routeGuardService
+@inject AppState AppState
+@inject DSV_Frontend.Services.IAuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">DSV_Frontend</a>
@@ -11,16 +13,19 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-account-login" aria-hidden="@(!this.isVerified)"></span> Login
+            <NavLink class="nav-link" href="">
+                <span class="oi oi-home"></span> Home
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-account-login" aria-hidden="@(this.isLoggedIn)"></span> Ausloggen
-            </NavLink>
-        </li>
-        @if (this.isVerified)
+        @if (!this.AppState.IsAuthenticated)
+        {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="login">
+                    <span class="oi oi-account-login"></span> Anmelden
+                </NavLink>
+            </li>
+        }
+        @if (this.AppState.IsAuthenticated) 
         {
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="fetchdata">
@@ -28,7 +33,7 @@
                 </NavLink>
             </li>
             <li class="nav-item px-3">
-                <NavLink class="nav-link" href="logout">
+                <NavLink @onclick="this.LogOut" class="nav-link" href="">
                     <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
                 </NavLink>
             </li>
@@ -47,8 +52,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        this.isVerified = await this.routeGuardService.VerifySecurityToken();
-        this.appState.StateChanged += this.HandleAppStateChanged;
+        this.AppState.StateChanged += this.HandleAppStateChanged;
 
         await base.OnInitializedAsync();
     }
@@ -60,6 +64,14 @@
 
     private void HandleAppStateChanged(object source, EventArgs empty)
     {
-        this.OnAfterRender(false);
+        this.InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LogOut()
+    {
+        var success = await this.AuthenticationService.LogoutAsync(this.AppState.Username);
+        this.AppState.IsAuthenticated = !success;
+        this.NavigationManager.NavigateTo("/login");
+        this.AppState.RaiseStateChanged();
     }
 }
