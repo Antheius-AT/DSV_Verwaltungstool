@@ -1,9 +1,8 @@
 ﻿@page "/register"
-
+@inject NavigationManager NavigationManager 
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using Models.Account; 
-
 
 <div class="col-xl-5">
     <div style="margin-bottom:32px">
@@ -39,6 +38,7 @@
                     </div>
                 </div>
                 <RadzenButton ButtonType="ButtonType.Submit" Text="Registrieren"></RadzenButton>
+                <RadzenButton class="return-to-login-button" Click="@NavigateBackToLogin" Text="Zurück zum Login"></RadzenButton>
             </RadzenFieldset>
         </RadzenTemplateForm>
 </div>
@@ -47,12 +47,17 @@
 
     public RegistrationArgs RegistrationArgs { get; set; } = new RegistrationArgs();
 
-    void OnSubmit(RegistrationArgs args)
+    public void OnSubmit(RegistrationArgs args)
     {
         Console.WriteLine($"Submit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
     }
 
-    void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+    public void NavigateBackToLogin()
+    {
+        this.NavigationManager.NavigateTo("/login");
+    }
+
+    public void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
     {
         Console.WriteLine($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions() { WriteIndented = true })}");
     }
