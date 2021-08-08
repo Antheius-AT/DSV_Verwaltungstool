@@ -187,16 +187,15 @@ namespace DSV_Backend_ServiceLayer
             if (username == null)
                 throw new ArgumentNullException(nameof(username), "Username to generate a token for must not be null.");
 
+            if (await this.tokenStore.ContainsKeyAsync(username))
+                throw new InvalidOperationException($"Cant store entry because username {username} is already used as a key.");
+
             var token = JwtBuilder.Create()
                 .WithAlgorithm(new HMACSHA256Algorithm())
                 .WithSecret(this.secret)
                 .AddClaim("name", username)
                 .ExpirationTime(DateTime.UtcNow.AddMinutes(30))
                 .Encode();
-
-            if (await this.tokenStore.ContainsKeyAsync(username))
-                return token;
-                //throw new InvalidOperationException($"Cant store entry because username {username} is already used as a key.");
 
             await this.tokenStore.StoreAsync(username, token);
 
