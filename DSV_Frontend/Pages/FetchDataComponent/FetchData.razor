@@ -1,0 +1,25 @@
+﻿@page "/fetchdata"
+
+@using DSV_Frontend.Services
+@using DSV_Frontend.ViewModels
+@using SharedDefinitions.DTOs
+@using SharedDefinitions.Enumerations
+ 
+@inject IAssetFetchingService AssetFetchingService
+
+@code {
+    private FetchDataViewModel viewModel { get; set; }
+
+    private DatabaseAssetFilterDTO filter { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.filter = new DatabaseAssetFilterDTO();
+        this.filter.ListType = ListType.Books;
+
+        var queryData = await this.AssetFetchingService.FetchAssets(filter);
+        
+
+        await base.OnInitializedAsync();
+    }
+}

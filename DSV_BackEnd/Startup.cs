@@ -38,6 +38,7 @@ namespace DSV_BackEnd
             services.AddTransient<IDatabaseService, SQLServerDatabaseService>();
             services.AddTransient<IObjectSerializationService, JSONSerializationService>();
             services.AddTransient<IAuthenticationService, JWTAuthenticationService>();
+            services.AddTransient<IObjectMappingService, ModelToDTOMappingService>();
 
             services.AddSingleton<IAuthenticationTokenStore, DictionaryTokenStore>();
 

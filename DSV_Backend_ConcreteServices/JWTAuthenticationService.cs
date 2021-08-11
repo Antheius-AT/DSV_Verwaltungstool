@@ -7,20 +7,17 @@
 namespace DSV_Backend_ServiceLayer
 {
     using System;
-    using System.Net;
     using System.Security.Cryptography;
     using System.Text;
     using System.Threading.Tasks;
     using DSV_BackEnd_DataLayer.DataModel;
     using DSV_BackEnd_ServicesContracts;
     using DSV_BackEnd_ServicesContracts.ServiceExceptions;
-    using JWT;
     using JWT.Algorithms;
     using JWT.Builder;
     using JWT.Exceptions;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-    using SharedDefinitions;
     using SharedDefinitions.DTOs;
     using SharedDefinitions.Services;
 

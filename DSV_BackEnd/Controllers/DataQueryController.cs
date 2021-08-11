@@ -7,12 +7,16 @@
 namespace DSV_BackEnd.Controllers
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using DSV_BackEnd_DataLayer.DataModel;
     using DSV_BackEnd_ServicesContracts;
     using DSV_BackEnd_ServicesContracts.ServiceExceptions;
     using Microsoft.AspNetCore.Mvc;
     using SharedDefinitions.Services;
+    using SharedDefinitions.DTOs;
+    using SharedDefinitions.Enumerations;
 
     /// <summary>
     /// Controller serving as an endpoint for requesting and submitting data from and to the database.
@@ -36,11 +40,17 @@ namespace DSV_BackEnd.Controllers
         /// </summary>
         private IAuthenticationService authService;
 
-        public DataQueryController(IDatabaseService databaseService, IObjectSerializationService objectSerializationService, IAuthenticationService authService)
+        /// <summary>
+        /// Represents a mapping service capable of mapping one object into another.
+        /// </summary>
+        private IObjectMappingService mapper;
+
+        public DataQueryController(IDatabaseService databaseService, IObjectSerializationService objectSerializationService, IAuthenticationService authService, IObjectMappingService mapper)
         {
             this.databaseService = databaseService;
             this.objectSerializationService = objectSerializationService;
             this.authService = authService;
+            this.mapper = mapper;
         }
 
         /// <summary>
@@ -65,7 +75,10 @@ namespace DSV_BackEnd.Controllers
             try
             {
                 var result = await this.databaseService.FetchBooksAsync();
-                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(result);
+
+                var dto = this.mapper.Map<ICollection<Book>, CompositeDatabaseAssetDTO, Book, DatabaseAssetDTO>(result);
+
+                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(dto);
 
                 return Content(serializedObject);
             }
@@ -96,7 +109,10 @@ namespace DSV_BackEnd.Controllers
             try
             {
                 var result = await this.databaseService.FetchArticlesAsync();
-                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(result);
+
+                var dto = this.mapper.Map<ICollection<Article>, CompositeDatabaseAssetDTO, Article, DatabaseAssetDTO>(result);
+
+                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(dto);
 
                 return Content(serializedObject);
             }
