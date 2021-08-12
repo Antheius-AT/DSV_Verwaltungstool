@@ -53,7 +53,7 @@ namespace DSV_Frontend.Services
             if (userData == null)
                 throw new ArgumentNullException(nameof(userData), "User data must not be null.");
 
-            var result = await this.webRequestService.SubmitResourceAsync<UserDataDTO>(string.Concat(this.configuration["BASEURI"], "api/", "authentication/", "authenticate"), userData);
+            var result = await this.webRequestService.SubmitResourceAsync<UserDataDTO>(string.Concat(this.configuration["BASEURI"], "authentication/", "authenticate"), userData);
 
             return result;
         }
@@ -77,7 +77,7 @@ namespace DSV_Frontend.Services
                 AuthenticationToken = this.appState.AuthenticationToken
             };
 
-            var response = await this.webRequestService.SubmitResourceAsync(string.Concat(this.configuration["BASEURI"], "api/", "authentication/", "logout"), logoutDTO);
+            var response = await this.webRequestService.SubmitResourceAsync(string.Concat(this.configuration["BASEURI"], "authentication/", "logout"), logoutDTO);
 
             return response.IsSuccess;
         }

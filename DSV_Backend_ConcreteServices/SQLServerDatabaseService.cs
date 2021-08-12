@@ -17,6 +17,8 @@ namespace DSV_Backend_ServiceLayer
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using SharedDefinitions.DTOs;
+    using System.Linq;
 
     /// <summary>
     /// Represents a database service using Microsoft SQL Server.
@@ -551,6 +553,33 @@ namespace DSV_Backend_ServiceLayer
             var user = await this.dbContext.Users.FirstOrDefaultAsync(p => p.Username == username);
 
             return user != null ? user : throw new AssetNotFoundException();
+        }
+
+        public async Task<ICollection<DatabaseAsset>> FetchAssetsAsync(DatabaseAssetFilterDTO filter)
+        {
+            var qry = this.ApplyFilter(filter);
+            return await qry.ToArrayAsync();
+        }
+
+        private IQueryable<DatabaseAsset> ApplyFilter(DatabaseAssetFilterDTO filter)
+        {
+            IQueryable<DatabaseAsset> qry;
+
+            switch (filter.ListType)
+            {
+                case SharedDefinitions.Enumerations.ListType.Books:
+                    qry = this.dbContext.Books;
+                    break;
+                case SharedDefinitions.Enumerations.ListType.Articles:
+                    qry = this.dbContext.Articles;
+                    break;
+                case SharedDefinitions.Enumerations.ListType.Other:
+                    throw new NotImplementedException();
+                default:
+                    throw new Exception();
+            }
+
+            return qry;
         }
     }
 }

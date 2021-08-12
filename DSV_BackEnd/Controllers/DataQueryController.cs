@@ -53,6 +53,25 @@ namespace DSV_BackEnd.Controllers
             this.mapper = mapper;
         }
 
+        [HttpPost]
+        [Route("fetchlist")]
+        public async Task<IActionResult> FetchListAsync([FromBody] DatabaseAssetFilterDTO filter, string token)
+        {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            if (!await this.AuthorizeRequest(token))
+                return Unauthorized();
+
+            var result = await this.databaseService.FetchAssetsAsync(filter);
+
+            var dto = this.mapper.Map<ICollection<DatabaseAsset>, CompositeDatabaseAssetDTO, DatabaseAsset, DatabaseAssetDTO>(result);
+
+            var serializedObject = await this.objectSerializationService.SerializeMessageAsync(dto);
+
+            return Content(serializedObject);
+        }
+
         /// <summary>
         /// Asynchronously fetches all available books stored in the database.
         /// </summary>
@@ -144,7 +163,9 @@ namespace DSV_BackEnd.Controllers
             try
             {
                 var result = await this.databaseService.FetchImagesAsync();
-                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(result);
+                var dto = this.mapper.Map<ICollection<Image>, CompositeDatabaseAssetDTO, Image, DatabaseAssetDTO>(result);
+
+                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(dto);
 
                 return Content(serializedObject);
             }
@@ -175,7 +196,9 @@ namespace DSV_BackEnd.Controllers
             try
             {
                 var result = await this.databaseService.FetchBookByID(bookID);
-                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(result);
+                var dto = this.mapper.Map<Book, DatabaseAssetDTO, Book, DatabaseAssetDTO>(result);
+
+                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(dto);
 
                 return Content(serializedObject);
             }
@@ -210,7 +233,9 @@ namespace DSV_BackEnd.Controllers
             try
             {
                 var result = await this.databaseService.FetchArticleByID(articleID);
-                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(result);
+                var dto = this.mapper.Map<Article, DatabaseAssetDTO, Article, DatabaseAssetDTO>(result);
+
+                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(dto);
 
                 return Content(serializedObject);
             }
@@ -248,7 +273,9 @@ namespace DSV_BackEnd.Controllers
             try
             {
                 var result = await this.databaseService.FetchImageByName(imageName);
-                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(result);
+                var dto = this.mapper.Map<Image, DatabaseAssetDTO, Image, DatabaseAssetDTO>(result);
+
+                var serializedObject = await this.objectSerializationService.SerializeMessageAsync(dto);
 
                 return Content(serializedObject);
             }
@@ -417,5 +444,16 @@ namespace DSV_BackEnd.Controllers
 
             return success ? Ok() : StatusCode(400);
         }
+
+        /// <summary>
+        /// Authorizes a request asynchronously.
+        /// </summary>
+        /// <param name="token">The authorization token to validate.</param>
+        /// <returns>Whether the token is valid and the request thereby authorized.</returns>
+        private async Task<bool> AuthorizeRequest(string token)
+        {
+            return await this.authService.AuthorizeRequestAsync(token);
+        }
+
     }
 }

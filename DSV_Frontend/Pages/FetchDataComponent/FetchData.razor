@@ -4,10 +4,28 @@
 @using DSV_Frontend.ViewModels
 @using SharedDefinitions.DTOs
 @using SharedDefinitions.Enumerations
- 
+
 @inject IAssetFetchingService AssetFetchingService
 
+<RadzenNumeric TValue="int" @bind-Value="this.assetType"></RadzenNumeric>
+<RadzenButton Click="this.Search"></RadzenButton>
+
+@if (this.viewModel?.Data?.Count() > 0)
+{
+    @foreach (var item in this.viewModel.Data)
+    {
+        <h1>@item.Title</h1>
+    }
+}
+else
+{
+    <h1>No data</h1>
+}
+
 @code {
+    // Experiment to test functionality!
+    private int assetType;
+
     private FetchDataViewModel viewModel { get; set; }
 
     private DatabaseAssetFilterDTO filter { get; set; }
@@ -15,11 +33,19 @@
     protected override async Task OnInitializedAsync()
     {
         this.filter = new DatabaseAssetFilterDTO();
-        this.filter.ListType = ListType.Books;
+        this.filter.ListType = (ListType)assetType;
 
         var queryData = await this.AssetFetchingService.FetchAssets(filter);
-        
+        this.viewModel = new FetchDataViewModel();
+        this.viewModel.Data = queryData;
 
         await base.OnInitializedAsync();
+    }
+
+    private async Task Search()
+    {
+        this.filter.ListType = (ListType)assetType;
+        var queryData = await this.AssetFetchingService.FetchAssets(filter);
+        this.viewModel.Data = queryData;
     }
 }

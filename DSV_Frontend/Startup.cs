@@ -35,8 +35,10 @@ namespace DSV_Frontend
 
             services.AddTransient<IObjectSerializationService, JSONSerializationService>();
             services.AddTransient<IAuthenticationService, JWTAuthenticationService>();
+            services.AddTransient<IObjectMappingService, ModelToDTOMappingService>();
             services.AddHttpClient<IWebResourceRequestService, HttpRequestService>();
 
+            services.AddSingleton<IAssetFetchingService, DatabaseAssetFetchingService>();
             services.AddSingleton<AppState>();
             services.AddSingleton<IRouteGuardService, JWTRouteGuardService>();
         }

@@ -39,7 +39,7 @@ namespace DSV_Frontend.Services
         /// <returns>A value indicating whether the security token found in <see cref="UserToken"/> is valid.</returns>
         public async Task<bool> VerifySecurityToken()
         {
-            var webResponse = await this.webRequestService.GetResourceAsync(string.Concat(this.configuration["BASEURI"], "api/", "authentication/", "verifytoken?", "token=", $"{this.appState.AuthenticationToken}"));
+            var webResponse = await this.webRequestService.GetResourceAsync(string.Concat(this.configuration["BASEURI"], "authentication/", "verifytoken?", "token=", $"{this.appState.AuthenticationToken}"));
 
             return webResponse.IsSuccess;
         }

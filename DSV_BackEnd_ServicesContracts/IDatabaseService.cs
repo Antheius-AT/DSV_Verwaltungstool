@@ -12,6 +12,7 @@ namespace DSV_BackEnd_ServicesContracts
     using DSV_BackEnd_DataLayer.DataModel;
     using DSV_BackEnd_DataLayer.DataLayerExceptions;
     using ServiceExceptions;
+    using SharedDefinitions.DTOs;
 
     /// <summary>
     /// Represents an abstract database service capable of connecting to and interacting 
@@ -19,6 +20,13 @@ namespace DSV_BackEnd_ServicesContracts
     /// </summary>
     public interface IDatabaseService
     {
+        /// <summary>
+        /// Fetches a collection of database assets based on the specified filter.
+        /// </summary>
+        /// <param name="filter">The specified filter determining which assets to fetch.</param>
+        /// <returns>The collection of fetches assets.</returns>
+        Task<ICollection<DatabaseAsset>> FetchAssetsAsync(DatabaseAssetFilterDTO filter);
+
         /// <summary>
         /// Fetches all available books from the database asynchronously.
         /// </summary>
