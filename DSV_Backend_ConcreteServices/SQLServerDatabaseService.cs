@@ -555,12 +555,22 @@ namespace DSV_Backend_ServiceLayer
             return user != null ? user : throw new AssetNotFoundException();
         }
 
+        /// <summary>
+        /// builds and executes the query in the database to fetch the assets.
+        /// </summary>
+        /// <param name="filter">The applied filter.</param>
+        /// <returns>The fetched assets under application of the filter.</returns>
         public async Task<ICollection<DatabaseAsset>> FetchAssetsAsync(DatabaseAssetFilterDTO filter)
         {
             var qry = this.ApplyFilter(filter);
             return await qry.ToArrayAsync();
         }
 
+        /// <summary>
+        /// Applies the filter to restrain what assets are acquired.
+        /// </summary>
+        /// <param name="filter">The specified filter.</param>
+        /// <returns>A query with all of the filters applied to it, ready to be executed.</returns>
         private IQueryable<DatabaseAsset> ApplyFilter(DatabaseAssetFilterDTO filter)
         {
             IQueryable<DatabaseAsset> qry;

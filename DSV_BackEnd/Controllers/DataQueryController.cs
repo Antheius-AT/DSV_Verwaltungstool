@@ -53,6 +53,12 @@ namespace DSV_BackEnd.Controllers
             this.mapper = mapper;
         }
 
+        /// <summary>
+        /// Fetches a list of database assets based on the specified filter.
+        /// </summary>
+        /// <param name="filter">The specified filter by which to filter assets.</param>
+        /// <param name="token">The authentication token.</param>
+        /// <returns>The fetched assets based on the filter or an Unauthorized result.</returns>
         [HttpPost]
         [Route("fetchlist")]
         public async Task<IActionResult> FetchListAsync([FromBody] DatabaseAssetFilterDTO filter, string token)
