@@ -24,6 +24,6 @@ namespace DSV_Frontend.Services
         /// <exception cref="ArgumentNullException">
         /// Is thrown if <paramref name="filter"/> is null.
         /// </exception>
-        Task<IEnumerable<DatabaseAssetDTO>> FetchAssets(DatabaseAssetFilterDTO filter);
+        Task<ICollection<DatabaseAssetDTO>> FetchAssets(DatabaseAssetFilterDTO filter);
     }
 }

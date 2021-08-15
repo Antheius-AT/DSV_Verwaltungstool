@@ -7,6 +7,7 @@
 namespace SharedDefinitions.Services
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -26,7 +27,7 @@ namespace SharedDefinitions.Services
         /// <returns>The mapped object.</returns>
         public TOutput Map<TInput, TOutput, TInputCollectionType, TOutputCollectionType>(TInput input) where TOutput : new()
         {
-            if (input.GetType().IsArray)
+            if (input.GetType().GetInterfaces().Contains(typeof(IEnumerable)) || input.GetType().IsArray)
                 return this.MapCollection<TInput, TOutput, TInputCollectionType, TOutputCollectionType>(input);
             else
                 return this.MapSingle<TInput, TOutput>(input);
@@ -41,7 +42,7 @@ namespace SharedDefinitions.Services
             var outputCollectionProperty = typeof(TOutput).GetProperties().FirstOrDefault(p => p.PropertyType.IsGenericType) ?? throw new ArgumentException(nameof(TOutput), "Output type must have generic collection property");
             var collection = new List<TOutputCollectionType>();
 
-            foreach (var item in input as ICollection<TInputCollectionType>)
+            foreach (var item in input as IEnumerable<TInputCollectionType>)
             {
                 var mappedAsset = this.MapSingle<TInputCollectionType, TOutputCollectionType>(item);
                 collection.Add(mappedAsset);
@@ -49,7 +50,7 @@ namespace SharedDefinitions.Services
 
             var output = Activator.CreateInstance<TOutput>();
             outputCollectionProperty.SetValue(output, collection);
-            
+
             return output;
         }
 

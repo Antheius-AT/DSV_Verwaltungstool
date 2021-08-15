@@ -1,52 +1,10 @@
-﻿@page "/login"
+﻿@using DSV_Frontend.UI_Controls.FormControls
 
-@inject DSV_Frontend.Services.IAuthenticationService AuthenticationService
-@inject NavigationManager NavigationManager
-@inject DSV_Frontend.Services.IRouteGuardService RouteGuardService
-@inject AppState AppState
+@page "/login"
 
-<h3>Einloggen</h3>
-<div class="row">
-    <div class="col-xl-5">
-        <RadzenCard>
-            <RadzenTemplateForm Data=@("")>
-                <RadzenLogin class="user-login" AllowResetPassword="false"
-                             LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort" RegisterText="Registrieren"
-                             UserRequired="Benutzername erforderlich" PasswordRequired="Passwort erforderlich"
-                             RegisterMessageText="Sie haben noch keinen Account?"
-                             Login=@(args => OnLogin(args))
-                             Register=@(args => OnRegister())
-                             style="margin-bottom: 20px;" />
-            </RadzenTemplateForm>
-        </RadzenCard>
-    </div>
-</div>
+<FPLogin HideLabel="false" Label="Login"></FPLogin>
 
 
 @code {
 
-    async Task OnLogin(LoginArgs args)
-    {
-        var userDataDto = new SharedDefinitions.DTOs.UserDataDTO();
-        userDataDto.Username = args.Username;
-        userDataDto.Password = args.Password;
-
-        Console.WriteLine(this.RouteGuardService.UserToken);
-
-        var response = await this.AuthenticationService.AuthenticateAsync(userDataDto);
-
-        if (response.IsSuccess)
-        {
-            this.AppState.AuthenticationToken = response.Data;
-            this.AppState.IsAuthenticated = true;
-            this.AppState.Username = userDataDto.Username;
-            this.AppState.RaiseStateChanged();
-            this.NavigationManager.NavigateTo("/");
-        }
-    }
-
-    void OnRegister()
-    {
-        NavigationManager.NavigateTo("/register");
-    }
 }

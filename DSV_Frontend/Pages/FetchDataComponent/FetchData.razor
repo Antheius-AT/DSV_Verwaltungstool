@@ -4,36 +4,41 @@
 @using DSV_Frontend.ViewModels
 @using SharedDefinitions.DTOs
 @using SharedDefinitions.Enumerations
+@using SharedDefinitions.Services;
 
+@inject IObjectMappingService ObjectMapper 
 @inject IAssetFetchingService AssetFetchingService
-
-<RadzenNumeric TValue="int" @bind-Value="this.assetType"></RadzenNumeric>
-<RadzenButton Click="this.Search"></RadzenButton>
 
 @if (this.viewModel?.Data?.Count() > 0)
 {
-    @foreach (var item in this.viewModel.Data)
+    switch (this.ListType)
     {
-        <h1>@item.Title</h1>
+        case ListType.Books:
+            <DSV_Frontend.UI_Controls.Display.FPBookList ViewModel="@(this.ObjectMapper.Map<ICollection<DatabaseAssetDTO>, BookListViewModel, DatabaseAssetDTO, BookDataDTO>(this.viewModel.Data))"></DSV_Frontend.UI_Controls.Display.FPBookList>
+        break;
+        case ListType.Articles:
+            break;
+        default:
+            break;
     }
 }
 else
 {
-    <h1>No data</h1>
+    <h1>Keine Daten!</h1>
 }
 
 @code {
-    // Experiment to test functionality!
-    private int assetType;
-
     private FetchDataViewModel viewModel { get; set; }
 
     private DatabaseAssetFilterDTO filter { get; set; }
 
+    public ListType ListType { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        this.ListType = ListType.Books;
         this.filter = new DatabaseAssetFilterDTO();
-        this.filter.ListType = (ListType)assetType;
+        this.filter.ListType = this.ListType;
 
         var queryData = await this.AssetFetchingService.FetchAssets(filter);
         this.viewModel = new FetchDataViewModel();
@@ -44,7 +49,7 @@ else
 
     private async Task Search()
     {
-        this.filter.ListType = (ListType)assetType;
+        this.filter.ListType = this.ListType;
         var queryData = await this.AssetFetchingService.FetchAssets(filter);
         this.viewModel.Data = queryData;
     }

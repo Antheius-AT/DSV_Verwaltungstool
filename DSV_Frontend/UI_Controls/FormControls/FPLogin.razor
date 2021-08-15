@@ -1,0 +1,50 @@
+﻿@using DSV_Frontend.Services
+
+@inherits FPControlBase
+
+@inject IRouteGuardService RouteGuardService
+@inject IAuthenticationService AuthenticationService
+@inject AppState AppState
+@inject NavigationManager NavigationManager    
+
+@if (!this.HideLabel)
+{
+    <RadzenLabel Visible="true" Text="@this.Label"></RadzenLabel>
+}
+
+<div class="row">
+    <div class="col-xl-5">
+        <RadzenCard>
+            <RadzenTemplateForm Data=@("")>
+                <RadzenLogin class="user-login" AllowResetPassword="false"
+                             LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort" RegisterText="Registrieren"
+                             UserRequired="Benutzername erforderlich" PasswordRequired="Passwort erforderlich"
+                             RegisterMessageText="Sie haben noch keinen Account?"
+                             Login=@(args => OnLogin(args))
+                             style="margin-bottom: 20px;" />
+            </RadzenTemplateForm>
+        </RadzenCard>
+    </div>
+</div>
+
+@code {
+    async Task OnLogin(LoginArgs args)
+    {
+        var userDataDto = new SharedDefinitions.DTOs.UserDataDTO();
+        userDataDto.Username = args.Username;
+        userDataDto.Password = args.Password;
+
+        Console.WriteLine(this.RouteGuardService.UserToken);
+
+        var response = await this.AuthenticationService.AuthenticateAsync(userDataDto);
+
+        if (response.IsSuccess)
+        {
+            this.AppState.AuthenticationToken = response.Data;
+            this.AppState.IsAuthenticated = true;
+            this.AppState.Username = userDataDto.Username;
+            this.AppState.RaiseStateChanged();
+            this.NavigationManager.NavigateTo("/");
+        }
+    }
+}

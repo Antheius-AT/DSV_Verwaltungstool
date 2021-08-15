@@ -52,9 +52,7 @@ namespace DSV_Frontend.Services
             if (!requestResponse.IsSuccessStatusCode)
                 resourceResponse = new WebResourceResponse(false, null);
             else
-            {
                 resourceResponse = new WebResourceResponse(true, await requestResponse.Content.ReadAsStringAsync());
-            }
 
             return resourceResponse;
         }

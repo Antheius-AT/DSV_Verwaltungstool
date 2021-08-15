@@ -1,0 +1,34 @@
+﻿<RadzenCard>
+    <div class="d-flex flex-column">
+        <div class="icon p-2">
+            <img src="assets/Icons/defaulticon.jpg" style="max-width:100%; height:auto" />
+        </div>
+        <div class="p-2 align-self-center">
+            <RadzenLabel Visible="true" Text="@this.Display"></RadzenLabel>
+        </div>
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter]
+    public string Display { get; set; }
+
+    [Parameter]
+    public bool IsClickable { get; set; }
+
+    [Parameter]
+    public string NavigationURI { get; set; }
+
+    [Parameter]
+    public string Icon { get; set; }
+
+    [Parameter]
+    public Action Callback { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.Icon = "defaulticon";
+
+        return base.OnInitializedAsync();
+    }
+}

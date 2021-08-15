@@ -58,7 +58,7 @@ namespace DSV_Frontend.Services
         /// </summary>
         /// <param name="filter">The specified filter by which to decide which assets to return.</param>
         /// <returns>A collection of DTOs containing asset data.</returns>
-        public async Task<IEnumerable<DatabaseAssetDTO>> FetchAssets(DatabaseAssetFilterDTO filter)
+        public async Task<ICollection<DatabaseAssetDTO>> FetchAssets(DatabaseAssetFilterDTO filter)
         {
             var response = await this.resourceRequestService.SubmitResourceAsync($"{this.configuration["BASEURI"]}dataquery/fetchlist?token={this.appState.AuthenticationToken}", filter);
 
