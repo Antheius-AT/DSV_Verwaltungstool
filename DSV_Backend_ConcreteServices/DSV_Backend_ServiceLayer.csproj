@@ -14,4 +14,8 @@
     <ProjectReference Include="..\DSV_BackEnd_ServicesContracts\DSV_BackEnd_ServicesContracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="PrivateServiceHelpers\" />
+  </ItemGroup>
+
 </Project>

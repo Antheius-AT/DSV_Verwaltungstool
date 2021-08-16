@@ -27,5 +27,11 @@ namespace SharedDefinitions.DTOs
         /// Gets or sets a filter containing properties to filter for in regards to articles.
         /// </summary>
         public ArticleFilterDTO ArticleFilter { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to ignore or check for further filtering
+        /// criteria, apart from list type.
+        /// </summary>
+        public bool NoFurtherFilteringRequested { get; set; }
     }
 }

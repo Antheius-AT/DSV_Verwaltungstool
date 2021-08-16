@@ -18,6 +18,7 @@ namespace DSV_Backend_ServiceLayer
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using SharedDefinitions.DTOs;
+    using SharedDefinitions.Enumerations;
     using System.Linq;
 
     /// <summary>
@@ -577,19 +578,66 @@ namespace DSV_Backend_ServiceLayer
 
             switch (filter.ListType)
             {
-                case SharedDefinitions.Enumerations.ListType.Books:
+                case ListType.Books:
                     qry = this.dbContext.Books;
                     break;
-                case SharedDefinitions.Enumerations.ListType.Articles:
+                case ListType.Articles:
                     qry = this.dbContext.Articles;
                     break;
-                case SharedDefinitions.Enumerations.ListType.Other:
+                case ListType.Other:
                     throw new NotImplementedException();
                 default:
                     throw new Exception();
             }
 
+            if (!filter.NoFurtherFilteringRequested)
+            {
+                if (filter.BookFilter != null)
+                    return this.ApplyAdvancedFilter(qry as IQueryable<Book>, filter.BookFilter);
+                else if (filter.ArticleFilter != null)
+                    return this.ApplyAdvancedFilter(qry as IQueryable<Article>, filter.ArticleFilter);
+                else
+                    throw new NotImplementedException();
+            }
+
             return qry;
+        }
+
+        /// <summary>
+        /// Applies advanced filters for filtering a collection of books.
+        /// </summary>
+        /// <param name="query">The queryable of database assets.</param>
+        /// <param name="bookFilter">The book filter to apply.</param>
+        /// <returns>A queryable of books with all necessary filters set to be invoked.</returns>
+        private IQueryable<DatabaseAsset> ApplyAdvancedFilter(IQueryable<Book> query, BookFilterDTO bookFilter)
+        {
+            if (bookFilter.Author != null)
+                query = query.Where(p => p.Author == bookFilter.Author);
+
+            if (bookFilter.Editor != null)
+                query = query.Where(p => p.Editor == bookFilter.Editor);
+
+            if (bookFilter.ISBN != null)
+                query = query.Where(p => p.ISBN == bookFilter.ISBN);
+
+            if (bookFilter.Publisher != null)
+                query = query.Where(p => p.Publisher == bookFilter.Publisher);
+
+            if (bookFilter.Title != null)
+                query = query.Where(p => p.Title == bookFilter.Title);
+
+            return query;
+        }
+
+        /// <summary>
+        /// Applies advanced filters for filtering a collection of articles.
+        /// </summary>
+        /// <param name="query">The queryable of database assets.</param>
+        /// <param name="articleFilter">The article filter to apply.</param>
+        /// <returns>A queryable of articles with all necessary filters set to be invoked.</returns>
+        private IQueryable<DatabaseAsset> ApplyAdvancedFilter(IQueryable<Article> query, ArticleFilterDTO articleFilter)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -10,7 +10,7 @@
 @inject IAssetFetchingService AssetFetchingService
 
 <DSV_Frontend.UI_Controls.Display.FPCard Label="Filtern">
-    <DSV_Frontend.UI_Controls.FormControls.FPFilterTool>
+    <DSV_Frontend.UI_Controls.FormControls.FPFilterTool ClickCallback="@(async (filter) => await this.Search(filter))">
 
     </DSV_Frontend.UI_Controls.FormControls.FPFilterTool>
 </DSV_Frontend.UI_Controls.Display.FPCard>
@@ -35,27 +35,22 @@ else
 @code {
     private FetchDataViewModel viewModel { get; set; }
 
-    private DatabaseAssetFilterDTO filter { get; set; }
-
     public ListType ListType { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        this.ListType = ListType.Books;
-        this.filter = new DatabaseAssetFilterDTO();
-        this.filter.ListType = this.ListType;
+        var filter = new DatabaseAssetFilterDTO();
+        filter.ListType = this.ListType;
+        filter.NoFurtherFilteringRequested = true;
 
-        var queryData = await this.AssetFetchingService.FetchAssets(filter);
-        this.viewModel = new FetchDataViewModel();
-        this.viewModel.Data = queryData;
-
+        await this.Search(filter);
         await base.OnInitializedAsync();
     }
 
-    private async Task Search()
+    private async Task Search(DatabaseAssetFilterDTO filter)
     {
-        this.filter.ListType = this.ListType;
         var queryData = await this.AssetFetchingService.FetchAssets(filter);
+        this.viewModel = new FetchDataViewModel();
         this.viewModel.Data = queryData;
     }
 }

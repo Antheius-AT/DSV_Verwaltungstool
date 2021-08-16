@@ -1,5 +1,8 @@
 ﻿@using SharedDefinitions.Enumerations
 @using SharedDefinitions.DTOs
+@using DSV_Frontend.Services
+
+@inject IAssetFetchingService AssetFetchService
 
 <div class="row">
     <div class="col-12 col-lg-4 col-md-6 ml-3">
@@ -49,7 +52,7 @@
 </div>
 <div class="row">
     <div class="col-3 mt-3 ml-3">
-        <FPButton Text="Suchen" BusyText="Filter werden angewandt" OnClick="@(async () => { await this.ApplyFilter(); })"></FPButton>
+        <FPButton Text="Suchen" BusyText="Filter werden angewandt" OnClick="@(() => this.ClickCallback?.Invoke(filter))"></FPButton>
     </div>
 </div>
 
@@ -59,6 +62,9 @@
 
     private DatabaseAssetFilterDTO filter;
 
+    [Parameter]
+    public Action<DatabaseAssetFilterDTO> ClickCallback { get; set; }
+
     protected override Task OnInitializedAsync()
     {
         this.filter = new DatabaseAssetFilterDTO();
@@ -66,14 +72,4 @@
         this.filter.ArticleFilter = new ArticleFilterDTO();
         return base.OnInitializedAsync();
     }
-
-    private async Task ApplyFilter()
-    {
-        throw new NotImplementedException();
-    }
-
-    private void Test(string parameter)
-        {
-
-        }
 }
