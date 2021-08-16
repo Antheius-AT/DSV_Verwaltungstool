@@ -62,8 +62,9 @@ namespace DSV_Frontend.Services
         {
             var response = await this.resourceRequestService.SubmitResourceAsync($"{this.configuration["BASEURI"]}dataquery/fetchlist?token={this.appState.AuthenticationToken}", filter);
 
+            // Throw exception or do something but dont return null thats only for testing.
             if (!response.IsSuccess)
-                throw new Exception();
+                return null;
 
             var dto = await this.serializationService.DeserializeMessageAsync<CompositeDatabaseAssetDTO>(response.Data);
 

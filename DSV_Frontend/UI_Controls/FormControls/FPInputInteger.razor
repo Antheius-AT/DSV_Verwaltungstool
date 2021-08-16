@@ -1,0 +1,16 @@
+﻿@inherits FPControlBase
+
+@if (!this.HideLabel)
+{
+    <DSV_Frontend.UI_Controls.Display.FPLabel Text="@this.Label"></DSV_Frontend.UI_Controls.Display.FPLabel>
+}
+
+<RadzenNumeric Placeholder="@this.Placeholder" TValue="int" @bind-Value="@this.Value"></RadzenNumeric>
+
+@code {
+    [Parameter]
+    public int Value { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; }
+}

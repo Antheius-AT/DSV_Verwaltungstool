@@ -17,5 +17,15 @@ namespace SharedDefinitions.DTOs
         /// Gets or sets the current list type.
         /// </summary>
         public ListType ListType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a filter containing properties to filter for in regards to books.
+        /// </summary>
+        public BookFilterDTO BookFilter { get; set; }
+
+        /// <summary>
+        /// Gets or sets a filter containing properties to filter for in regards to articles.
+        /// </summary>
+        public ArticleFilterDTO ArticleFilter { get; set; }
     }
 }

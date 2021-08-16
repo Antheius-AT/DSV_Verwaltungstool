@@ -9,6 +9,11 @@
 @inject IObjectMappingService ObjectMapper 
 @inject IAssetFetchingService AssetFetchingService
 
+<DSV_Frontend.UI_Controls.Display.FPCard Label="Filtern">
+    <DSV_Frontend.UI_Controls.FormControls.FPFilterTool>
+
+    </DSV_Frontend.UI_Controls.FormControls.FPFilterTool>
+</DSV_Frontend.UI_Controls.Display.FPCard>
 @if (this.viewModel?.Data?.Count() > 0)
 {
     switch (this.ListType)

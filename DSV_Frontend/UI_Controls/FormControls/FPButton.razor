@@ -1,0 +1,15 @@
+﻿<RadzenButton Click="@this.OnClick" Icon="@this.IconName" Text="@this.Text" BusyText="@this.BusyText"></RadzenButton>
+
+@code {
+    [Parameter]
+    public Action OnClick { get; set; }
+
+    [Parameter]
+    public string BusyText { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public string IconName { get; set; }
+}

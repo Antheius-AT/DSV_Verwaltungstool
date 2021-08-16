@@ -1,0 +1,79 @@
+﻿@using SharedDefinitions.Enumerations
+@using SharedDefinitions.DTOs
+
+<div class="row">
+    <div class="col-12 col-lg-4 col-md-6 ml-3">
+        <FPInputText PlaceHolder="Stichwortsuche.."></FPInputText>
+    </div>
+
+    @if (this.ListType == ListType.Books)
+    {
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPInputText PlaceHolder="Nach Titel filtern.." @bind-Value="this.filter.BookFilter.Title" @bind-Value:event="ValueChanged"></FPInputText>
+        </div>
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPInputText PlaceHolder="Nach Autor filtern.." @bind-Value="this.filter.BookFilter.Author"></FPInputText>
+        </div>
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPInputText PlaceHolder="Nach ISBN filtern.." @bind-Value="this.filter.BookFilter.ISBN"></FPInputText>
+        </div>
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPInputText PlaceHolder="Nach Herausgeber filtern.." @bind-Value="this.filter.BookFilter.Publisher"></FPInputText>
+        </div>
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPInputText PlaceHolder="Nach Verlag filtern.." @bind-Value="this.filter.BookFilter.Editor"></FPInputText>
+        </div>
+    }
+
+    @if (this.ListType == ListType.Articles)
+    {
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPInputText PlaceHolder="Nach Titel filtern.." @bind-Value="this.filter.ArticleFilter.Title"></FPInputText>
+        </div>
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPInputText PlaceHolder="Nach Autor filtern.." @bind-Value="this.filter.ArticleFilter.Author"></FPInputText>
+        </div>
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPInputText PlaceHolder="Nach Herausgeber filtern.." @bind-Value="this.filter.ArticleFilter.Editor"></FPInputText>
+        </div>
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPInputInteger PlaceHolder="Nach Erscheinungsjahr filtern.." @bind-Value="this.filter.ArticleFilter.PublicationYear"></FPInputInteger>
+        </div>
+    }
+
+    @if (this.ListType == ListType.Other)
+    {
+
+    }
+
+</div>
+<div class="row">
+    <div class="col-3 mt-3 ml-3">
+        <FPButton Text="Suchen" BusyText="Filter werden angewandt" OnClick="@(async () => { await this.ApplyFilter(); })"></FPButton>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ListType ListType { get; set; }
+
+    private DatabaseAssetFilterDTO filter;
+
+    protected override Task OnInitializedAsync()
+    {
+        this.filter = new DatabaseAssetFilterDTO();
+        this.filter.BookFilter = new BookFilterDTO();
+        this.filter.ArticleFilter = new ArticleFilterDTO();
+        return base.OnInitializedAsync();
+    }
+
+    private async Task ApplyFilter()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void Test(string parameter)
+        {
+
+        }
+}

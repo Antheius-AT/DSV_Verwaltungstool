@@ -1,0 +1,32 @@
+﻿@inherits FPControlBase
+
+<RadzenCard>
+
+        @if (!this.HideLabel)
+        {
+            <FPLabel Text="Filtermöglichkeiten"></FPLabel>
+            <hr />
+        }
+
+            @if (this.ChildContent != null)
+            {
+                @this.ChildContent;
+            }
+            else
+            {
+                <h1>No Content set.</h1>
+            }
+</RadzenCard>
+@code {
+    [Parameter]
+    public bool IsClickable { get; set; }
+
+    [Parameter]
+    public Action ClickCallback { get; set; }
+
+    [Parameter]
+    public string NavigationURI { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

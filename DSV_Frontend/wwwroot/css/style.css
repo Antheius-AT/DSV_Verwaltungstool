@@ -1,3 +1,9 @@
-﻿h3 {
-    color:red
+﻿hr {
+    border:0;
+    clear:both;
+    display:block;
+    width:100%;
+    background-color:black;
+    height:1px;
+    opacity:0.3;
 }
