@@ -16,10 +16,9 @@
     <div class="col-xl-5">
         <RadzenCard>
             <RadzenTemplateForm Data=@("")>
-                <RadzenLogin class="user-login" AllowResetPassword="false"
-                             LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort" RegisterText="Registrieren"
+                <RadzenLogin AllowRegister="false" class="user-login" AllowResetPassword="false"
+                             LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort"
                              UserRequired="Benutzername erforderlich" PasswordRequired="Passwort erforderlich"
-                             RegisterMessageText="Sie haben noch keinen Account?"
                              Login=@(args => OnLogin(args))
                              style="margin-bottom: 20px;" />
             </RadzenTemplateForm>

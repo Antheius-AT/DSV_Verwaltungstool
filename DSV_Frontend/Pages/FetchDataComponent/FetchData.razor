@@ -2,6 +2,8 @@
 
 @using DSV_Frontend.Services
 @using DSV_Frontend.ViewModels
+@using DSV_Frontend.UI_Controls.FormControls 
+@using DSV_Frontend.UI_Controls.Display 
 @using SharedDefinitions.DTOs
 @using SharedDefinitions.Enumerations
 @using SharedDefinitions.Services;
@@ -10,16 +12,16 @@
 @inject IAssetFetchingService AssetFetchingService
 
 <DSV_Frontend.UI_Controls.Display.FPCard Label="Filtern">
-    <DSV_Frontend.UI_Controls.FormControls.FPFilterTool ClickCallback="@(async (filter) => await this.Search(filter))">
+    <FPFilterTool ClickCallback="@(async (filter) => await this.Search(filter))">
 
-    </DSV_Frontend.UI_Controls.FormControls.FPFilterTool>
+    </FPFilterTool>
 </DSV_Frontend.UI_Controls.Display.FPCard>
 @if (this.viewModel?.Data?.Count() > 0)
 {
     switch (this.ListType)
     {
         case ListType.Books:
-            <DSV_Frontend.UI_Controls.Display.FPBookList ViewModel="@(this.ObjectMapper.Map<ICollection<DatabaseAssetDTO>, BookListViewModel, DatabaseAssetDTO, BookDataDTO>(this.viewModel.Data))"></DSV_Frontend.UI_Controls.Display.FPBookList>
+            <FPBookList ViewModel="@(this.ObjectMapper.Map<ICollection<DatabaseAssetDTO>, BookListViewModel, DatabaseAssetDTO, BookDataDTO>(this.viewModel.Data))"></FPBookList>
         break;
         case ListType.Articles:
             break;
