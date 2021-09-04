@@ -561,7 +561,7 @@ namespace DSV_Backend_ServiceLayer
         /// </summary>
         /// <param name="filter">The applied filter.</param>
         /// <returns>The fetched assets under application of the filter.</returns>
-        public async Task<ICollection<DatabaseAsset>> FetchAssetsAsync(DatabaseAssetFilterDTO filter)
+        public async Task<ICollection<DatabaseAsset>> FetchAssetsAsync(MultipleDatabaseAssetFilterDTO filter)
         {
             var qry = this.ApplyFilter(filter);
             return await qry.ToArrayAsync();
@@ -572,7 +572,7 @@ namespace DSV_Backend_ServiceLayer
         /// </summary>
         /// <param name="filter">The specified filter.</param>
         /// <returns>A query with all of the filters applied to it, ready to be executed.</returns>
-        private IQueryable<DatabaseAsset> ApplyFilter(DatabaseAssetFilterDTO filter)
+        private IQueryable<DatabaseAsset> ApplyFilter(MultipleDatabaseAssetFilterDTO filter)
         {
             IQueryable<DatabaseAsset> qry;
 

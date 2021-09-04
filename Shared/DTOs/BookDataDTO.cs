@@ -14,7 +14,7 @@ namespace SharedDefinitions.DTOs
         /// <summary>
         /// Gets or sets the book id.
         /// </summary>
-        public int ID
+        public int AssetID
         {
             get;
             set;

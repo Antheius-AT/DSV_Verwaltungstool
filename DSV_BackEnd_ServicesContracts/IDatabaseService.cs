@@ -25,7 +25,7 @@ namespace DSV_BackEnd_ServicesContracts
         /// </summary>
         /// <param name="filter">The specified filter determining which assets to fetch.</param>
         /// <returns>The collection of fetches assets.</returns>
-        Task<ICollection<DatabaseAsset>> FetchAssetsAsync(DatabaseAssetFilterDTO filter);
+        Task<ICollection<DatabaseAsset>> FetchAssetsAsync(MultipleDatabaseAssetFilterDTO filter);
 
         /// <summary>
         /// Fetches all available books from the database asynchronously.

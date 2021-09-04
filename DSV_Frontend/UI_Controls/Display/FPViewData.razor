@@ -1,15 +1,23 @@
-﻿<RadzenCard>
+﻿@inject NavigationManager NavManager
+
+<FPCard OnClick="this.ExecuteClick">
     <div class="d-flex flex-column">
         <div class="icon p-2">
             <img src="assets/Icons/defaulticon.jpg" style="max-width:100%; height:auto" />
         </div>
         <div class="p-2 align-self-center">
-            <RadzenLabel Visible="true" Text="@this.Display"></RadzenLabel>
+            @foreach (var item in this.Display.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+            {
+                <FPLabel Text="@item"></FPLabel>
+                <br />
+            }
         </div>
     </div>
-</RadzenCard>
+</FPCard>
 
 @code {
+    private bool canClick => this.IsClickable && (this.Callback != null || this.NavigationURI != null);
+
     [Parameter]
     public string Display { get; set; }
 
@@ -30,5 +38,16 @@
         this.Icon = "defaulticon";
 
         return base.OnInitializedAsync();
+    }
+
+    private void ExecuteClick()
+    {
+        if (!this.canClick)
+            return;
+
+        if (this.Callback != null)
+            this.Callback.Invoke();
+        else
+            this.NavManager.NavigateTo(this.NavigationURI);
     }
 }

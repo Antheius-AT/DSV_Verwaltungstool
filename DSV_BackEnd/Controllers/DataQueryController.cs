@@ -61,7 +61,7 @@ namespace DSV_BackEnd.Controllers
         /// <returns>The fetched assets based on the filter or an Unauthorized result.</returns>
         [HttpPost]
         [Route("fetchlist")]
-        public async Task<IActionResult> FetchListAsync([FromBody] DatabaseAssetFilterDTO filter, string token)
+        public async Task<IActionResult> FetchListAsync([FromBody] MultipleDatabaseAssetFilterDTO filter, string token)
         {
             if (token == null)
                 return BadRequest("Authorization token must not be null.");
@@ -76,6 +76,35 @@ namespace DSV_BackEnd.Controllers
             var serializedObject = await this.objectSerializationService.SerializeMessageAsync(dto);
 
             return Content(serializedObject);
+        }
+
+        /// <summary>
+        /// Fetches a list of database assets based on the specified filter.
+        /// </summary>
+        /// <param name="filter">The specified filter by which to filter assets.</param>
+        /// <param name="token">The authentication token.</param>
+        /// <returns>The fetched assets based on the filter or an Unauthorized result.</returns>
+        [HttpPost]
+        [Route("fetchsingle")]
+        public async Task<IActionResult> FetchSingleAsync([FromBody] SingleDatabaseAssetFilterDTO filter, string token)
+        {
+            if (token == null)
+                return BadRequest("Authorization token must not be null.");
+
+            if (!await this.AuthorizeRequest(token))
+                return Unauthorized();
+
+            switch (filter.ListType)
+            {
+                case ListType.Books:
+                    return await this.FetchSingleBookAsync(filter.ID, token);
+                case ListType.Articles:
+                    return await this.FetchSingleArticleAsync(filter.ID, token);
+                case ListType.Other:
+                    throw new NotImplementedException();
+                default:
+                    return BadRequest("Please specify what you want to fetch");
+            }
         }
 
         /// <summary>
@@ -458,7 +487,6 @@ namespace DSV_BackEnd.Controllers
         /// <returns>Whether the token is valid and the request thereby authorized.</returns>
         private async Task<bool> AuthorizeRequest(string token)
         {
-            return true;
             return await this.authService.AuthorizeRequestAsync(token);
         }
 

@@ -11,7 +11,7 @@ namespace SharedDefinitions.DTOs
     /// <summary>
     /// Represents a filter used for filtering data in the backend.
     /// </summary>
-    public class DatabaseAssetFilterDTO
+    public class MultipleDatabaseAssetFilterDTO
     {
         /// <summary>
         /// Gets or sets the current list type.

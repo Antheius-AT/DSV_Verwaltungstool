@@ -1,0 +1,80 @@
+﻿@page "/details/book/{ID:int}"
+
+@using DSV_Frontend.Services
+@using DSV_Frontend.UI_Controls.Display
+@using SharedDefinitions.Enumerations
+@using SharedDefinitions.Services
+@using SharedDefinitions.DTOs
+
+@inject IRouteGuardService RouteGuardService
+@inject NavigationManager NavManager
+@inject IAssetFetchingService AssetFetchService
+@inject IObjectMappingService ObjectMapper
+
+@if (!this.isAllowed)
+{
+    <FPLoadPage></FPLoadPage>
+}
+else
+{
+    if (this.bookData != null)
+    {
+
+        <table class="table">
+            <tr>
+                <th>ID</th>
+                <th>Autor</th>
+                <th>Titel</th>
+                <th>Untertitel</th>
+                <th>Verlag</th>
+                <th>Herausgeber</th>
+                <th>ISBN</th>
+                <th>Seitenanzahl</th>
+                <th>Alte Signatur</th>
+                <th>Erscheinungsort</th>
+                <th>Erscheinungsjahr</th>
+            </tr>
+            <tr>
+                <td>@bookData.AssetID</td>
+                <td>@bookData.Author</td>
+                <td>@bookData.Title</td>
+                <td>@bookData.SubLevelTitle</td>
+                <td>@bookData.Editor</td>
+                <td>@bookData.Publisher</td>
+                <td>@bookData.ISBN</td>
+                <td>@bookData.Pages</td>
+                <td>@bookData.PublicationLocation</td>
+                <td>@bookData.PublicationYear</td>
+            </tr>
+        </table>
+    }
+    else
+    {
+        <FPNoData></FPNoData>
+    }
+
+}
+
+@code {
+    private bool isAllowed;
+
+    private BookDataDTO bookData;
+
+    [Parameter]
+    public int ID { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.isAllowed = false;
+
+        if (!await this.RouteGuardService.VerifySecurityToken())
+        {
+            this.NavManager.NavigateTo("/login");
+        }
+
+        this.isAllowed = true;
+        var assetDTO = await this.AssetFetchService.FetchSingle(new SharedDefinitions.DTOs.SingleDatabaseAssetFilterDTO() { ID = this.ID, ListType = ListType.Books });
+        this.bookData = this.ObjectMapper.Map<DatabaseAssetDTO, BookDataDTO, DatabaseAssetDTO, BookDataDTO>(assetDTO);
+        await base.OnInitializedAsync();
+    }
+}

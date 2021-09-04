@@ -2,54 +2,75 @@
 
 @using DSV_Frontend.Services
 @using DSV_Frontend.ViewModels
-@using DSV_Frontend.UI_Controls.FormControls 
-@using DSV_Frontend.UI_Controls.Display 
+@using DSV_Frontend.UI_Controls.FormControls
+@using DSV_Frontend.UI_Controls.Display
 @using SharedDefinitions.DTOs
 @using SharedDefinitions.Enumerations
 @using SharedDefinitions.Services;
 
-@inject IObjectMappingService ObjectMapper 
+@inject IObjectMappingService ObjectMapper
 @inject IAssetFetchingService AssetFetchingService
+@inject IRouteGuardService RouteGuardService
+@inject NavigationManager NavManager
 
-<DSV_Frontend.UI_Controls.Display.FPCard Label="Filtern">
-    <FPFilterTool ClickCallback="@(async (filter) => await this.Search(filter))">
-
-    </FPFilterTool>
-</DSV_Frontend.UI_Controls.Display.FPCard>
-@if (this.viewModel?.Data?.Count() > 0)
+@if (!this.isAllowed)
 {
-    switch (this.ListType)
-    {
-        case ListType.Books:
-            <FPBookList ViewModel="@(this.ObjectMapper.Map<ICollection<DatabaseAssetDTO>, BookListViewModel, DatabaseAssetDTO, BookDataDTO>(this.viewModel.Data))"></FPBookList>
-        break;
-        case ListType.Articles:
-            break;
-        default:
-            break;
-    }
+    <FPLoadPage></FPLoadPage>
 }
 else
 {
-    <h1>Keine Daten!</h1>
+
+    <DSV_Frontend.UI_Controls.Display.FPCard Label="Filtermöglichkeiten">
+        <FPFilterTool ClickCallback="@(async (filter) => await this.Search(filter))">
+
+        </FPFilterTool>
+    </DSV_Frontend.UI_Controls.Display.FPCard>
+    @if (this.viewModel?.Data?.Count() > 0)
+    {
+        switch (this.ListType)
+        {
+            case ListType.Books:
+                <FPBookList ViewModel="@(this.ObjectMapper.Map<ICollection<DatabaseAssetDTO>, BookListViewModel, DatabaseAssetDTO, BookDataDTO>(this.viewModel.Data))"></FPBookList>
+                break;
+            case ListType.Articles:
+                break;
+            default:
+                break;
+        }
+    }
+    else
+    {
+        <h1>Keine Daten!</h1>
+    }
 }
 
 @code {
     private FetchDataViewModel viewModel { get; set; }
+    private bool isAllowed;
 
     public ListType ListType { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var filter = new DatabaseAssetFilterDTO();
+        this.isAllowed = false;
+
+        if (!await this.RouteGuardService.VerifySecurityToken())
+        {
+            this.NavManager.NavigateTo("/login");
+        }
+
+        var filter = new MultipleDatabaseAssetFilterDTO();
         filter.ListType = this.ListType;
         filter.NoFurtherFilteringRequested = true;
 
         await this.Search(filter);
+
+        this.isAllowed = true;
+
         await base.OnInitializedAsync();
     }
 
-    private async Task Search(DatabaseAssetFilterDTO filter)
+    private async Task Search(MultipleDatabaseAssetFilterDTO filter)
     {
         var queryData = await this.AssetFetchingService.FetchAssets(filter);
         this.viewModel = new FetchDataViewModel();

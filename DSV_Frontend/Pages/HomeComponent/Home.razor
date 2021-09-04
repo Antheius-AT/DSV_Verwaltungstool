@@ -1,5 +1,7 @@
 ﻿@page "/"
 
+@using DSV_Frontend.UI_Controls.Display
+
 @inject DSV_Frontend.Services.IRouteGuardService RouteGuardService
 @inject NavigationManager NavigationManager
 
@@ -9,7 +11,7 @@
 }
 else
 {
-    <h3>Loading</h3>
+    <FPLoadPage></FPLoadPage>
 }
 
 @code {

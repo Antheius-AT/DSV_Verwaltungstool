@@ -58,17 +58,29 @@ namespace DSV_Frontend.Services
         /// </summary>
         /// <param name="filter">The specified filter by which to decide which assets to return.</param>
         /// <returns>A collection of DTOs containing asset data.</returns>
-        public async Task<ICollection<DatabaseAssetDTO>> FetchAssets(DatabaseAssetFilterDTO filter)
+        public async Task<ICollection<DatabaseAssetDTO>> FetchAssets(MultipleDatabaseAssetFilterDTO filter)
         {
             var response = await this.resourceRequestService.SubmitResourceAsync($"{this.configuration["BASEURI"]}dataquery/fetchlist?token={this.appState.AuthenticationToken}", filter);
 
             // Throw exception or do something but dont return null thats only for testing.
             if (!response.IsSuccess)
-                return null;
+                throw new Exception("Fetch assets failure");
 
             var dto = await this.serializationService.DeserializeMessageAsync<CompositeDatabaseAssetDTO>(response.Data);
 
             return dto.DatabaseAssetDTOs;
+        }
+
+        public async Task<DatabaseAssetDTO> FetchSingle(SingleDatabaseAssetFilterDTO filter)
+        {
+            var response = await this.resourceRequestService.SubmitResourceAsync($"{this.configuration["BASEURI"]}dataquery/fetchsingle?token={this.appState.AuthenticationToken}", filter);
+
+            if (!response.IsSuccess)
+                throw new Exception("Fetch single asset failure");
+
+            var dto = await this.serializationService.DeserializeMessageAsync<DatabaseAssetDTO>(response.Data);
+
+            return dto;
         }
     }
 }

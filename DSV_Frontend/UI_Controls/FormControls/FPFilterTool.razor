@@ -60,14 +60,14 @@
     [Parameter]
     public ListType ListType { get; set; }
 
-    private DatabaseAssetFilterDTO filter;
+    private MultipleDatabaseAssetFilterDTO filter;
 
     [Parameter]
-    public Action<DatabaseAssetFilterDTO> ClickCallback { get; set; }
+    public Action<MultipleDatabaseAssetFilterDTO> ClickCallback { get; set; }
 
     protected override Task OnInitializedAsync()
     {
-        this.filter = new DatabaseAssetFilterDTO();
+        this.filter = new MultipleDatabaseAssetFilterDTO();
         this.filter.BookFilter = new BookFilterDTO();
         this.filter.ArticleFilter = new ArticleFilterDTO();
         return base.OnInitializedAsync();
