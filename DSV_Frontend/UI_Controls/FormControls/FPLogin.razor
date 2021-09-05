@@ -1,4 +1,5 @@
 ﻿@using DSV_Frontend.Services
+@using DSV_Frontend.UI_Controls.Display 
 
 @inherits FPControlBase
 
@@ -20,7 +21,7 @@
                              LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort"
                              UserRequired="Benutzername erforderlich" PasswordRequired="Passwort erforderlich"
                              Login=@(args => OnLogin(args))
-                             style="margin-bottom: 20px;" />
+                             />
             </RadzenTemplateForm>
         </RadzenCard>
     </div>

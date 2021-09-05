@@ -6,7 +6,7 @@
         @foreach (var item in this.ViewModel.Books)
         {
             <div class="mt-2 col-lg-4 col-md-6 col-sm-12">
-                <DSV_Frontend.UI_Controls.Display.FPViewData NavigationURI="@($"/details/book/{item.AssetID}")" IsClickable="true" Display="@($"Buch ID: {item.AssetID}\nTitel: {item.Title}\nAutor: {item.Author}")"></DSV_Frontend.UI_Controls.Display.FPViewData>
+                <FPViewData NavigationURI="@($"/details/book/{item.AssetID}")" IsClickable="true" Display="@($"Buch ID: {item.AssetID}\nTitel: {item.Title}\nAutor: {item.Author}")"></FPViewData>
             </div>
         }
     </div>

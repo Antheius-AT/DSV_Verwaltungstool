@@ -2,7 +2,7 @@
 @using SharedDefinitions.DTOs
 @using DSV_Frontend.Services
 @using DSV_Frontend.UI_Controls.FormControls
- 
+
 @inject IAssetFetchingService AssetFetchService
 @inject AppState AppState
 
@@ -57,45 +57,45 @@
 
             }
         </div>
-            <div class="row ml-3">
-                <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
-                    <FPButton Text="Suchen" BusyText="Filter werden angewandt" OnClick="@(() => this.ApplyFilter())"></FPButton>
-                </div>
+        <div class="row ml-3">
+            <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                <FPButton Text="Suchen" BusyText="Filter werden angewandt" OnClick="@(() => this.ApplyFilter())"></FPButton>
             </div>
-    </ChildContent> 
+        </div>
+    </ChildContent>
 </DSV_Frontend.UI_Controls.Display.FPCard>
 
 
-    @code {
-        private IEnumerable<ListType> listTypes = Enum.GetValues<ListType>();
+@code {
+    private IEnumerable<ListType> listTypes = Enum.GetValues<ListType>();
 
-        private MultipleDatabaseAssetFilterDTO filter;
+    private MultipleDatabaseAssetFilterDTO filter;
 
-        [Parameter]
-        public Action<MultipleDatabaseAssetFilterDTO> InvokeFilterCallback { get; set; }
+    [Parameter]
+    public Action<MultipleDatabaseAssetFilterDTO> InvokeFilterCallback { get; set; }
 
-        protected override Task OnInitializedAsync()
-        {
-            this.filter = new MultipleDatabaseAssetFilterDTO();
-            this.filter.BookFilter = new BookFilterDTO();
-            this.filter.ArticleFilter = new ArticleFilterDTO();
-            this.filter.ListType = ListType.Books;
+    protected override Task OnInitializedAsync()
+    {
+        this.filter = new MultipleDatabaseAssetFilterDTO();
+        this.filter.BookFilter = new BookFilterDTO();
+        this.filter.ArticleFilter = new ArticleFilterDTO();
+        this.filter.ListType = ListType.Books;
 
-            return base.OnInitializedAsync();
-        }
-
-        private void SelectionChanged(object parameter)
-        {
-            if (parameter is not SharedDefinitions.Enumerations.ListType)
-                return;
-
-            this.filter.ResetFilter();
-            this.filter.ListType = (SharedDefinitions.Enumerations.ListType)parameter;
-            this.ApplyFilter();
-        }
-
-        private void ApplyFilter()
-        {
-            this.InvokeFilterCallback?.Invoke(this.filter);
-        }
+        return base.OnInitializedAsync();
     }
+
+    private void SelectionChanged(object parameter)
+    {
+        if (parameter is not SharedDefinitions.Enumerations.ListType)
+            return;
+
+        this.filter.ResetFilter();
+        this.filter.ListType = (SharedDefinitions.Enumerations.ListType)parameter;
+        this.ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        this.InvokeFilterCallback?.Invoke(this.filter);
+    }
+}

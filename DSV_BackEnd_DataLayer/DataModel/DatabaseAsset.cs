@@ -25,5 +25,11 @@ namespace DSV_BackEnd_DataLayer.DataModel
             get;
             set;
         }
+
+        public string AdditionalComments
+        {
+            get;
+            set;
+        }
     }
 }

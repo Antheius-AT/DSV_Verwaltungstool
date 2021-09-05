@@ -27,6 +27,11 @@ namespace DSV_Backend_ServiceLayer
     public class SQLServerDatabaseService : IDatabaseService
     {
         /// <summary>
+        /// An array of characters used for splitting key phrase search strings.
+        /// </summary>
+        private char[] splitChars;
+
+        /// <summary>
         /// Database context capable of communicating with the underlying SQL Server database.
         /// </summary>
         private DSVDatabaseContext dbContext;
@@ -51,6 +56,10 @@ namespace DSV_Backend_ServiceLayer
             this.configuration = configuration;
             this.databaseServiceLogger = logger;
             this.dbContext = dbContext;
+            this.splitChars = new char[]
+              {
+                    ' ', ',', ';', '\"'
+              };
         }
 
         /// <summary>
@@ -604,20 +613,42 @@ namespace DSV_Backend_ServiceLayer
         /// <returns>A queryable of books with all necessary filters set to be invoked.</returns>
         private IQueryable<DatabaseAsset> ApplyAdvancedFilter(IQueryable<Book> query, MultipleDatabaseAssetFilterDTO filter)
         {
-            if (filter.BookFilter.Author != null)
-                query = query.Where(p => p.Author == filter.BookFilter.Author);
+            if (filter.BookFilter.Author != null && !string.IsNullOrWhiteSpace(filter.BookFilter.Author))
+                query = query.Where(p => p.Author.ToLower().Contains(filter.BookFilter.Author.ToLower()));
 
-            if (filter.BookFilter.Editor != null)
-                query = query.Where(p => p.Editor == filter.BookFilter.Editor);
+            if (filter.BookFilter.Editor != null && !string.IsNullOrWhiteSpace(filter.BookFilter.Editor))
+                query = query.Where(p => p.Editor.ToLower().Contains(filter.BookFilter.Editor.ToLower()));
 
-            if (filter.BookFilter.ISBN != null)
-                query = query.Where(p => p.ISBN == filter.BookFilter.ISBN);
+            if (filter.BookFilter.ISBN != null && !string.IsNullOrWhiteSpace(filter.BookFilter.ISBN))
+                query = query.Where(p => p.ISBN.ToLower().Contains(filter.BookFilter.ISBN.ToLower()));
 
-            if (filter.BookFilter.Publisher != null)
-                query = query.Where(p => p.Publisher == filter.BookFilter.Publisher);
+            if (filter.BookFilter.Publisher != null && !string.IsNullOrWhiteSpace(filter.BookFilter.Publisher))
+                query = query.Where(p => p.Publisher.ToLower().Contains(filter.BookFilter.Publisher.ToLower()));
 
-            if (filter.BookFilter.Title != null)
-                query = query.Where(p => p.Title == filter.BookFilter.Title);
+            if (filter.BookFilter.Title != null && !string.IsNullOrWhiteSpace(filter.BookFilter.Title))
+                query = query.Where(p => p.Title.ToLower().Contains(filter.BookFilter.Title.ToLower()));
+
+            if (filter.KeyphraseSearchString != null)
+            {
+                var keyPhrases = filter.KeyphraseSearchString.ToLower().Split(this.splitChars, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var item in keyPhrases)
+                {
+                    query =
+                        query.Where(p =>
+                        p.Title.ToLower().Contains(item)
+                    || p.Author.ToLower().Contains(item)
+                    || p.Editor.ToLower().Contains(item)
+                    || p.PreviousStorageLocation.ToLower().Contains(item)
+                    || p.PublicationYear.ToString().ToLower().Contains(item)
+                    || p.ISBN.ToLower().Contains(item)
+                    || p.Pages.ToLower().Contains(item)
+                    || p.PublicationLocation.ToLower().Contains(item)
+                    || p.SubLevelTitle.ToLower().Contains(item)
+                    || p.Publisher.ToLower().Contains(item)
+                    || p.AdditionalComments.ToLower().Contains(item));
+                }
+            }
 
             return query;
         }
@@ -630,34 +661,33 @@ namespace DSV_Backend_ServiceLayer
         /// <returns>A queryable of articles with all necessary filters set to be invoked.</returns>
         private IQueryable<DatabaseAsset> ApplyAdvancedFilter(IQueryable<Article> query, MultipleDatabaseAssetFilterDTO filter)
         {
-            if (filter.ArticleFilter.Author != null)
-                query = query.Where(p => p.Author == filter.ArticleFilter.Author);
+            if (filter.ArticleFilter.Author != null && !string.IsNullOrWhiteSpace(filter.ArticleFilter.Author))
+                query = query.Where(p => p.Author.ToLower().Contains(filter.ArticleFilter.Author.ToLower()));
 
-            if (filter.ArticleFilter.Editor != null)
-                query = query.Where(p => p.Editor == filter.ArticleFilter.Editor);
+            if (filter.ArticleFilter.Editor != null && !string.IsNullOrWhiteSpace(filter.ArticleFilter.Editor))
+                query = query.Where(p => p.Editor.ToLower().Contains(filter.ArticleFilter.Editor.ToLower()));
 
             if (filter.ArticleFilter.PublicationYear != default)
                 query = query.Where(p => p.PublicationYear == filter.ArticleFilter.PublicationYear);
 
-            if (filter.ArticleFilter.Title != null)
-                query = query.Where(p => p.Title == filter.ArticleFilter.Title);
+            if (filter.ArticleFilter.Title != null && !string.IsNullOrWhiteSpace(filter.ArticleFilter.Title))
+                query = query.Where(p => p.Title.ToLower().Contains(filter.ArticleFilter.Title.ToLower()));
 
             if (filter.KeyphraseSearchString != null)
             {
-                var splitChars = new char[]
-                {
-                    ' ', ',', ';', '\"'
-                };
-
-                var keyPhrases = filter.KeyphraseSearchString.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
+                var keyPhrases = filter.KeyphraseSearchString.ToLower().Split(this.splitChars, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var item in keyPhrases)
                 {
                     query =
-                        query.Where(p => p.Title.Contains(item)
-                    || p.Author.Contains(item) || p.Editor.Contains(item)
-                    || p.PreviousStorageLocation.Contains(item)
-                    || p.PublicationYear.ToString().Contains(item));
+                        query.Where(p =>
+                        p.Title.ToLower().Contains(item)
+                    || p.Author.ToLower().Contains(item)
+                    || p.Editor.ToLower().Contains(item)
+                    || p.PreviousStorageLocation.ToLower().Contains(item)
+                    || p.PublicationYear.ToString().ToLower().Contains(item)
+                    || p.AdditionalComments.ToLower().Contains(item));
+
                 }
             }
 

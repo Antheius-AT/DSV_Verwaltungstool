@@ -176,16 +176,13 @@ namespace DSV_Backend_ServiceLayer
         /// <exception cref="ArgumentNullException">
         /// Is thrown if <paramref name="username"/> is null.
         /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// Is thrown if the username <paramref name="username"/> is already used as a token key in the <see cref="IAuthenticationTokenStore"/> store.
-        /// </exception>
         public async Task<string> GenerateAuthenticationTokenAsync(string username)
         {
             if (username == null)
                 throw new ArgumentNullException(nameof(username), "Username to generate a token for must not be null.");
 
             if (await this.tokenStore.ContainsKeyAsync(username))
-                throw new InvalidOperationException($"Cant store entry because username {username} is already used as a key.");
+                await this.tokenStore.RemoveByKeyAsync(username);
 
             var token = JwtBuilder.Create()
                 .WithAlgorithm(new HMACSHA256Algorithm())

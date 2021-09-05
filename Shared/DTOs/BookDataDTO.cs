@@ -119,5 +119,11 @@ namespace SharedDefinitions.DTOs
             get;
             set;
         }
+
+        public string AdditionalComments
+        {
+            get;
+            set;
+        }
     }
 }

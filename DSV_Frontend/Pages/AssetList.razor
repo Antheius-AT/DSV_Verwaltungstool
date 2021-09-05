@@ -1,0 +1,130 @@
+﻿@page "/assetlist"
+
+@using DSV_Frontend.Services
+@using DSV_Frontend.ViewModels
+@using DSV_Frontend.UI_Controls.FormControls
+@using DSV_Frontend.UI_Controls.Display
+@using SharedDefinitions.DTOs
+@using SharedDefinitions.Enumerations
+@using SharedDefinitions.Services;
+
+@inject IObjectMappingService ObjectMapper
+@inject IAssetFetchingService AssetFetchingService
+@inject IRouteGuardService RouteGuardService
+@inject NavigationManager NavManager
+@inject AppState AppState
+@inject IJSRuntime JsRuntime
+
+@if (!this.isAllowed)
+{
+    <FPLoadPage></FPLoadPage>
+}
+else
+{
+    <FPLabel Text="@($"Seite {this.viewModel.PageIndex + 1} von {this.viewModel.GetNumberOfPages()}")"></FPLabel>
+    <RadzenPager Count="this.count" PageSize="this.pageSize" PageNumbersCount="this.pagesAmount" PageChanged="this.HandlePageChanged"></RadzenPager>
+
+    <div class="row">
+        <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+            <FPButton Text="Neues Medium" OnClick="@this.CreateNew"></FPButton>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 mt-3">
+            <FPFilterTool InvokeFilterCallback="@(async (filter) => await this.Search(filter))">
+            </FPFilterTool>
+        </div>
+    </div>
+
+    @if (this.displayedAssets.Count() > 0)
+    {
+        switch (this.AppState.ListType)
+        {
+            case ListType.Books:
+                <FPBookList ViewModel="@(this.ObjectMapper.Map<IEnumerable<DatabaseAssetDTO>, BookListViewModel, DatabaseAssetDTO, BookDataDTO>(this.displayedAssets))"></FPBookList>
+                break;
+            case ListType.Articles:
+                <FPArticleList ViewModel="@(this.ObjectMapper.Map<IEnumerable<DatabaseAssetDTO>, ArticleListViewModel, DatabaseAssetDTO, ArticleDataDTO>(this.displayedAssets))"></FPArticleList>
+                break;
+            case ListType.Other:
+                <FPImageList ViewModel="@(this.ObjectMapper.Map<IEnumerable<DatabaseAssetDTO>, ImageListViewModel, DatabaseAssetDTO, ImageDataDTO>(this.displayedAssets))"></FPImageList>
+                break;
+            default:
+                break;
+        }
+    }
+    else
+    {
+        <h1>Keine Daten!</h1>
+    }
+
+    <FPLabel Text="@($"Seite {this.viewModel.PageIndex + 1} von {this.viewModel.GetNumberOfPages()}")"></FPLabel>
+    <RadzenPager Count="this.count" PageSize="this.pageSize" PageNumbersCount="this.pagesAmount" PageChanged="this.HandlePageChanged"></RadzenPager>
+}
+
+@code {
+    private FetchDataViewModel viewModel { get; set; }
+    private bool isAllowed;
+    private int count => this.viewModel != null ? this.viewModel.Data.Count : 0;
+    private int pageSize => this.viewModel != null ? this.viewModel.PageSize : 1;
+    private int pagesAmount => this.viewModel.GetNumberOfPages();
+    private IEnumerable<DatabaseAssetDTO> displayedAssets;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.displayedAssets = new List<DatabaseAssetDTO>();
+        this.isAllowed = false;
+
+        if (!await this.RouteGuardService.VerifySecurityToken())
+        {
+            this.NavManager.NavigateTo("/login");
+        }
+
+        var filter = new MultipleDatabaseAssetFilterDTO();
+        filter.ListType = this.AppState.ListType;
+
+        await this.Search(filter);
+
+        this.isAllowed = true;
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task Search(MultipleDatabaseAssetFilterDTO filter)
+    {
+        if (this.AppState.ListType != filter.ListType)
+            this.viewModel.PageIndex = 0;
+
+        this.AppState.ListType = filter.ListType;
+        var queryData = await this.AssetFetchingService.FetchAssets(filter);
+        this.viewModel = new FetchDataViewModel();
+        this.viewModel.Data = queryData;
+        this.displayedAssets = this.viewModel.GetDisplayedAssets();
+        this.StateHasChanged();
+    }
+
+    private void CreateNew()
+    {
+        switch (this.AppState.ListType)
+        {
+            case ListType.Books:
+                this.NavManager.NavigateTo("create/book");
+                break;
+            case ListType.Articles:
+                this.NavManager.NavigateTo("create/article");
+                break;
+            case ListType.Other:
+                this.NavManager.NavigateTo("upload/image");
+                break;
+            default:
+                return;
+        }
+    }
+
+    private async Task HandlePageChanged(PagerEventArgs e)
+    {
+        this.viewModel.PageIndex = e.PageIndex;
+        this.displayedAssets = this.viewModel.GetDisplayedAssets();
+        await this.JsRuntime.InvokeVoidAsync("ScrollToTop");
+    }
+}
