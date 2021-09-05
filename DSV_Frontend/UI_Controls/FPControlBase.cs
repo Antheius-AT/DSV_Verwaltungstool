@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 namespace DSV_Frontend.UI_Controls
 {
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 
     /// <summary>
@@ -24,5 +25,14 @@ namespace DSV_Frontend.UI_Controls
         /// </summary>
         [Parameter]
         public bool HideLabel { get; set; }
+
+        [Parameter]
+        public bool IsVisible { get; set; }
+
+        protected override Task OnInitializedAsync()
+        {
+            this.IsVisible = true;
+            return base.OnInitializedAsync();
+        }
     }
 }

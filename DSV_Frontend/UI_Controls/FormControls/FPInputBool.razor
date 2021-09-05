@@ -5,13 +5,13 @@
     <DSV_Frontend.UI_Controls.Display.FPLabel Text="@this.Label"></DSV_Frontend.UI_Controls.Display.FPLabel>
 }
 
-<RadzenNumeric @bind-Visible="@this.IsVisible" Placeholder="@this.PlaceHolder" TValue="int" @bind-Value="@this.Value"></RadzenNumeric>
+<RadzenCheckBox @bind-Visible="this.IsVisible" Placeholder="@this.PlaceHolder" TValue="bool" @bind-Value="@this.Value"></RadzenCheckBox>
 
 @code {
-    private int value;
+    private bool value;
 
     [Parameter]
-    public int Value
+    public bool Value
     {
         get
         {
@@ -31,5 +31,5 @@
     public string PlaceHolder { get; set; }
 
     [Parameter]
-    public EventCallback<int> ValueChanged { get; set; }
+    public EventCallback<bool> ValueChanged { get; set; }
 }

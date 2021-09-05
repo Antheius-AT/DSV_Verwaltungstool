@@ -323,7 +323,7 @@ namespace DSV_Backend_ServiceLayer
             try
             {
                 var toModify = await this.dbContext.Books.FirstOrDefaultAsync(p => p.AssetID == ID) ?? throw new AssetNotFoundException();
-                
+
                 this.UpdateBookData(toModify, updatedBook);
                 await this.dbContext.SaveChangesAsync();
                 this.databaseServiceLogger.LogInformation($"Successfully replaced book definition for book with ID: {ID}", toModify, updatedBook);
@@ -384,7 +384,7 @@ namespace DSV_Backend_ServiceLayer
         public async Task<bool> ModifyImageDataAsync(string imageName, string imageData)
         {
             if (imageData == null)
-                throw new ArgumentNullException(nameof(imageData), "Image data must not be null.");                
+                throw new ArgumentNullException(nameof(imageData), "Image data must not be null.");
 
             try
             {
@@ -580,32 +580,17 @@ namespace DSV_Backend_ServiceLayer
             {
                 case ListType.Books:
                     qry = this.dbContext.Books;
+                    qry = this.ApplyAdvancedFilter(qry as IQueryable<Book>, filter);
                     break;
                 case ListType.Articles:
                     qry = this.dbContext.Articles;
+                    qry = this.ApplyAdvancedFilter(qry as IQueryable<Article>, filter);
                     break;
                 case ListType.Other:
                     qry = this.dbContext.Images;
                     break;
                 default:
                     throw new Exception();
-            }
-
-            if (!filter.NoFurtherFilteringRequested)
-            {
-                switch (filter.ListType)
-                {
-                    case ListType.Books:
-                        qry = this.ApplyAdvancedFilter(qry as IQueryable<Book>, filter.BookFilter);
-                        break;
-                    case ListType.Articles:
-                        qry = this.ApplyAdvancedFilter(qry as IQueryable<Article>, filter.ArticleFilter);
-                        break;
-                    case ListType.Other:
-                        throw new NotImplementedException();
-                    default:
-                        throw new Exception();
-                }
             }
 
             return qry;
@@ -617,22 +602,22 @@ namespace DSV_Backend_ServiceLayer
         /// <param name="query">The queryable of database assets.</param>
         /// <param name="bookFilter">The book filter to apply.</param>
         /// <returns>A queryable of books with all necessary filters set to be invoked.</returns>
-        private IQueryable<DatabaseAsset> ApplyAdvancedFilter(IQueryable<Book> query, BookFilterDTO bookFilter)
+        private IQueryable<DatabaseAsset> ApplyAdvancedFilter(IQueryable<Book> query, MultipleDatabaseAssetFilterDTO filter)
         {
-            if (bookFilter.Author != null)
-                query = query.Where(p => p.Author == bookFilter.Author);
+            if (filter.BookFilter.Author != null)
+                query = query.Where(p => p.Author == filter.BookFilter.Author);
 
-            if (bookFilter.Editor != null)
-                query = query.Where(p => p.Editor == bookFilter.Editor);
+            if (filter.BookFilter.Editor != null)
+                query = query.Where(p => p.Editor == filter.BookFilter.Editor);
 
-            if (bookFilter.ISBN != null)
-                query = query.Where(p => p.ISBN == bookFilter.ISBN);
+            if (filter.BookFilter.ISBN != null)
+                query = query.Where(p => p.ISBN == filter.BookFilter.ISBN);
 
-            if (bookFilter.Publisher != null)
-                query = query.Where(p => p.Publisher == bookFilter.Publisher);
+            if (filter.BookFilter.Publisher != null)
+                query = query.Where(p => p.Publisher == filter.BookFilter.Publisher);
 
-            if (bookFilter.Title != null)
-                query = query.Where(p => p.Title == bookFilter.Title);
+            if (filter.BookFilter.Title != null)
+                query = query.Where(p => p.Title == filter.BookFilter.Title);
 
             return query;
         }
@@ -643,9 +628,40 @@ namespace DSV_Backend_ServiceLayer
         /// <param name="query">The queryable of database assets.</param>
         /// <param name="articleFilter">The article filter to apply.</param>
         /// <returns>A queryable of articles with all necessary filters set to be invoked.</returns>
-        private IQueryable<DatabaseAsset> ApplyAdvancedFilter(IQueryable<Article> query, ArticleFilterDTO articleFilter)
+        private IQueryable<DatabaseAsset> ApplyAdvancedFilter(IQueryable<Article> query, MultipleDatabaseAssetFilterDTO filter)
         {
-            throw new NotImplementedException();
+            if (filter.ArticleFilter.Author != null)
+                query = query.Where(p => p.Author == filter.ArticleFilter.Author);
+
+            if (filter.ArticleFilter.Editor != null)
+                query = query.Where(p => p.Editor == filter.ArticleFilter.Editor);
+
+            if (filter.ArticleFilter.PublicationYear != default)
+                query = query.Where(p => p.PublicationYear == filter.ArticleFilter.PublicationYear);
+
+            if (filter.ArticleFilter.Title != null)
+                query = query.Where(p => p.Title == filter.ArticleFilter.Title);
+
+            if (filter.KeyphraseSearchString != null)
+            {
+                var splitChars = new char[]
+                {
+                    ' ', ',', ';', '\"'
+                };
+
+                var keyPhrases = filter.KeyphraseSearchString.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var item in keyPhrases)
+                {
+                    query =
+                        query.Where(p => p.Title.Contains(item)
+                    || p.Author.Contains(item) || p.Editor.Contains(item)
+                    || p.PreviousStorageLocation.Contains(item)
+                    || p.PublicationYear.ToString().Contains(item));
+                }
+            }
+
+            return query;
         }
     }
 }

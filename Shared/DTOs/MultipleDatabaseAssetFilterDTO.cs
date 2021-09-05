@@ -13,6 +13,12 @@ namespace SharedDefinitions.DTOs
     /// </summary>
     public class MultipleDatabaseAssetFilterDTO
     {
+        public MultipleDatabaseAssetFilterDTO()
+        {
+            this.BookFilter = new BookFilterDTO();
+            this.ArticleFilter = new ArticleFilterDTO();
+        }
+
         /// <summary>
         /// Gets or sets the current list type.
         /// </summary>
@@ -29,6 +35,11 @@ namespace SharedDefinitions.DTOs
         public ArticleFilterDTO ArticleFilter { get; set; }
 
         /// <summary>
+        /// Gets or sets a string containing key phrases to search for.
+        /// </summary>
+        public string KeyphraseSearchString { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether to ignore or check for further filtering
         /// criteria, apart from list type.
         /// </summary>
@@ -37,7 +48,6 @@ namespace SharedDefinitions.DTOs
         public void ResetFilter()
         {
             this.ListType = ListType.Books;
-            this.NoFurtherFilteringRequested = true;
         }
     }
 }

@@ -20,11 +20,9 @@
 }
 else
 {
-    <FPCard Label="Filtermöglichkeiten">
-        <FPFilterTool ClickCallback="@(async (filter) => await this.Search(filter))">
+        <FPFilterTool InvokeFilterCallback="@(async (filter) => await this.Search(filter))">
 
         </FPFilterTool>
-    </FPCard>
     @if (this.viewModel?.Data?.Count() > 0)
     {
         switch (this.AppState.ListType)
@@ -63,7 +61,6 @@ else
 
         var filter = new MultipleDatabaseAssetFilterDTO();
         filter.ListType = this.AppState.ListType;
-        filter.NoFurtherFilteringRequested = true;
 
         await this.Search(filter);
 
