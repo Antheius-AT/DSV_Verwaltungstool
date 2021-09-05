@@ -585,19 +585,27 @@ namespace DSV_Backend_ServiceLayer
                     qry = this.dbContext.Articles;
                     break;
                 case ListType.Other:
-                    throw new NotImplementedException();
+                    qry = this.dbContext.Images;
+                    break;
                 default:
                     throw new Exception();
             }
 
             if (!filter.NoFurtherFilteringRequested)
             {
-                if (filter.BookFilter != null)
-                    return this.ApplyAdvancedFilter(qry as IQueryable<Book>, filter.BookFilter);
-                else if (filter.ArticleFilter != null)
-                    return this.ApplyAdvancedFilter(qry as IQueryable<Article>, filter.ArticleFilter);
-                else
-                    throw new NotImplementedException();
+                switch (filter.ListType)
+                {
+                    case ListType.Books:
+                        qry = this.ApplyAdvancedFilter(qry as IQueryable<Book>, filter.BookFilter);
+                        break;
+                    case ListType.Articles:
+                        qry = this.ApplyAdvancedFilter(qry as IQueryable<Article>, filter.ArticleFilter);
+                        break;
+                    case ListType.Other:
+                        throw new NotImplementedException();
+                    default:
+                        throw new Exception();
+                }
             }
 
             return qry;

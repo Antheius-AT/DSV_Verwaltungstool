@@ -3,14 +3,16 @@ using DSV_BackEnd_DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DSV_BackEnd_DataLayer.Migrations
 {
     [DbContext(typeof(DSVDatabaseContext))]
-    partial class DSVDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210904234354_Modified Image to be database asset migration")]
+    partial class ModifiedImagetobedatabaseassetmigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

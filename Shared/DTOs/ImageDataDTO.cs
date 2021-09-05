@@ -1,19 +1,13 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Image.cs" company="FSolutions">
-//     Copyright (c) FSolutions. All rights reserved.
+// <copyright file="ImageDataDTO.cs" company="FPSolutions">
+//     Copyright (c) FPSolutions. All rights reserved.
 // </copyright>
 // <author>Gregor Faiman</author>
 //-----------------------------------------------------------------------
-namespace DSV_BackEnd_DataLayer.DataModel
+namespace SharedDefinitions.DTOs
 {
-    /// <summary>
-    /// Represents an image uploaded by the user.
-    /// </summary>
-    public class Image : DatabaseAsset
+    public class ImageDataDTO
     {
-        /// <summary>
-        /// Gets or sets the image name.
-        /// </summary>
         public string ImageName
         {
             get;

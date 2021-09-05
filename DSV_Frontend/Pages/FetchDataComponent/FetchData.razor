@@ -12,6 +12,7 @@
 @inject IAssetFetchingService AssetFetchingService
 @inject IRouteGuardService RouteGuardService
 @inject NavigationManager NavManager
+@inject AppState AppState 
 
 @if (!this.isAllowed)
 {
@@ -19,20 +20,23 @@
 }
 else
 {
-
-    <DSV_Frontend.UI_Controls.Display.FPCard Label="Filtermöglichkeiten">
+    <FPCard Label="Filtermöglichkeiten">
         <FPFilterTool ClickCallback="@(async (filter) => await this.Search(filter))">
 
         </FPFilterTool>
-    </DSV_Frontend.UI_Controls.Display.FPCard>
+    </FPCard>
     @if (this.viewModel?.Data?.Count() > 0)
     {
-        switch (this.ListType)
+        switch (this.AppState.ListType)
         {
             case ListType.Books:
                 <FPBookList ViewModel="@(this.ObjectMapper.Map<ICollection<DatabaseAssetDTO>, BookListViewModel, DatabaseAssetDTO, BookDataDTO>(this.viewModel.Data))"></FPBookList>
                 break;
             case ListType.Articles:
+                <FPArticleList ViewModel="@(this.ObjectMapper.Map<ICollection<DatabaseAssetDTO>, ArticleListViewModel, DatabaseAssetDTO, ArticleDataDTO>(this.viewModel.Data))"></FPArticleList>
+                break;
+            case ListType.Other:
+                <FPImageList ViewModel="@(this.ObjectMapper.Map<ICollection<DatabaseAssetDTO>, ImageListViewModel, DatabaseAssetDTO, ImageDataDTO>(this.viewModel.Data))"></FPImageList>
                 break;
             default:
                 break;
@@ -48,8 +52,6 @@ else
     private FetchDataViewModel viewModel { get; set; }
     private bool isAllowed;
 
-    public ListType ListType { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
         this.isAllowed = false;
@@ -60,7 +62,7 @@ else
         }
 
         var filter = new MultipleDatabaseAssetFilterDTO();
-        filter.ListType = this.ListType;
+        filter.ListType = this.AppState.ListType;
         filter.NoFurtherFilteringRequested = true;
 
         await this.Search(filter);
@@ -72,8 +74,10 @@ else
 
     private async Task Search(MultipleDatabaseAssetFilterDTO filter)
     {
+        this.AppState.ListType = filter.ListType;
         var queryData = await this.AssetFetchingService.FetchAssets(filter);
         this.viewModel = new FetchDataViewModel();
         this.viewModel.Data = queryData;
+        this.StateHasChanged();
     }
 }

@@ -1,15 +1,19 @@
 ﻿@using SharedDefinitions.Enumerations
 @using SharedDefinitions.DTOs
 @using DSV_Frontend.Services
-
+  
 @inject IAssetFetchingService AssetFetchService
-
+@inject AppState AppState
+  
+<div class="row ml-3">
+    <RadzenDropDown Placeholder="Medientyp auswählen" Data="this.listTypes" TValue="ListType" SelectedItemChanged="@(p => this.SelectionChanged(p))"></RadzenDropDown>
+</div>
 <div class="row">
-    <div class="col-12 col-lg-4 col-md-6 ml-3">
+    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
         <FPInputText PlaceHolder="Stichwortsuche.."></FPInputText>
     </div>
 
-    @if (this.ListType == ListType.Books)
+    @if (this.AppState.ListType == ListType.Books)
     {
         <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
             <FPInputText PlaceHolder="Nach Titel filtern.." @bind-Value="this.filter.BookFilter.Title" @bind-Value:event="ValueChanged"></FPInputText>
@@ -28,7 +32,7 @@
         </div>
     }
 
-    @if (this.ListType == ListType.Articles)
+    @if (this.AppState.ListType == ListType.Articles)
     {
         <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
             <FPInputText PlaceHolder="Nach Titel filtern.." @bind-Value="this.filter.ArticleFilter.Title"></FPInputText>
@@ -44,7 +48,7 @@
         </div>
     }
 
-    @if (this.ListType == ListType.Other)
+    @if (this.AppState.ListType == ListType.Other)
     {
 
     }
@@ -57,8 +61,7 @@
 </div>
 
 @code {
-    [Parameter]
-    public ListType ListType { get; set; }
+    private IEnumerable<ListType> listTypes = Enum.GetValues<ListType>();
 
     private MultipleDatabaseAssetFilterDTO filter;
 
@@ -71,5 +74,14 @@
         this.filter.BookFilter = new BookFilterDTO();
         this.filter.ArticleFilter = new ArticleFilterDTO();
         return base.OnInitializedAsync();
+    }
+
+    private void SelectionChanged(object parameter)
+    {
+        if (parameter is not SharedDefinitions.Enumerations.ListType)
+            return;
+
+        this.filter.ResetFilter();
+        this.filter.ListType = (SharedDefinitions.Enumerations.ListType)parameter;
     }
 }

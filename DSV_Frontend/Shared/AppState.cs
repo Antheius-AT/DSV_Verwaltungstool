@@ -7,6 +7,7 @@
 namespace DSV_Frontend.Shared
 {
     using System;
+    using SharedDefinitions.Enumerations;
 
     /// <summary>
     /// Represents the current's application state regarding authentication.
@@ -32,6 +33,8 @@ namespace DSV_Frontend.Shared
         /// Gets or sets the authentication token.
         /// </summary>
         public string AuthenticationToken { get; set; }
+
+        public ListType ListType { get; set; }
 
         /// <summary>
         /// Raises the <see cref="StateChanged"/> event.

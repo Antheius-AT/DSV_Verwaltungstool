@@ -33,5 +33,11 @@ namespace SharedDefinitions.DTOs
         /// criteria, apart from list type.
         /// </summary>
         public bool NoFurtherFilteringRequested { get; set; }
+
+        public void ResetFilter()
+        {
+            this.ListType = ListType.Books;
+            this.NoFurtherFilteringRequested = true;
+        }
     }
 }

@@ -1,16 +1,22 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Article.cs" company="FSolutions">
-//     Copyright (c) FSolutions. All rights reserved.
+// <copyright file="ArticleDataDTO.cs" company="FPSolutions">
+//     Copyright (c) FPSolutions. All rights reserved.
 // </copyright>
 // <author>Gregor Faiman</author>
 //-----------------------------------------------------------------------
-namespace DSV_BackEnd_DataLayer.DataModel
+namespace SharedDefinitions.DTOs
 {
-    /// <summary>
-    /// Represents an article stored in the DSV's database.
-    /// </summary>
-    public class Article : DatabaseAsset
+    public class ArticleDataDTO
     {
+        /// <summary>
+        /// Gets or sets the asset ID.
+        /// </summary>
+        public int AssetID
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Gets or sets the author.
         /// </summary>

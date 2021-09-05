@@ -5,12 +5,31 @@
     <DSV_Frontend.UI_Controls.Display.FPLabel Text="@this.Label"></DSV_Frontend.UI_Controls.Display.FPLabel>
 }
 
-<RadzenNumeric Placeholder="@this.Placeholder" TValue="int" @bind-Value="@this.Value"></RadzenNumeric>
+<RadzenNumeric Placeholder="@this.PlaceHolder" TValue="int" @bind-Value="@this.Value"></RadzenNumeric>
 
 @code {
-    [Parameter]
-    public int Value { get; set; }
+    private int value;
 
     [Parameter]
-    public string Placeholder { get; set; }
+    public int Value
+    {
+        get
+        {
+            return this.value;
+        }
+        set
+        {
+            if (this.value != value)
+            {
+                this.value = value;
+                this.ValueChanged.InvokeAsync(this.value);
+            }
+        }
+    }
+
+    [Parameter]
+    public string PlaceHolder { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
 }

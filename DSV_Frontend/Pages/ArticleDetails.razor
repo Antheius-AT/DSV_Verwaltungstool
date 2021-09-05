@@ -1,4 +1,4 @@
-﻿@page "/details/book/{ID:int}"
+﻿@page "/details/article/{ID:int}"
 
 @using DSV_Frontend.Services
 @using DSV_Frontend.UI_Controls.Display
@@ -17,57 +17,33 @@
 }
 else
 {
-    if (this.bookData != null)
+    if (this.articleData != null)
     {
-
         <table class="table table-striped table-bordered table-hover">
             <tbody>
                 <tr>
                     <th>ID</th>
-                    <td>@bookData.AssetID</td>
+                    <td>@articleData.AssetID</td>
                 </tr>
                 <tr>
                     <th>Autor</th>
-                    <td>@bookData.Author</td>
+                    <td>@articleData.Author</td>
                 </tr>
                 <tr>
                     <th>Titel</th>
-                    <td>@bookData.Title</td>
-                </tr>
-                <tr>
-                    <th>Untertitel</th>
-                    <td>@bookData.SubLevelTitle</td>
+                    <td>@articleData.Title</td>
                 </tr>
                 <tr>
                     <th>Verlag</th>
-                    <td>@bookData.Editor</td>
-                </tr>
-                <tr>
-                    <th>Herausgeber</th>
-                    <td>@bookData.Publisher</td>
-
-                </tr>
-                <tr>
-                    <th>ISBN</th>
-                    <td>@bookData.ISBN</td>
-
-                </tr>
-                <tr>
-                    <th>Seitenanzahl</th>
-                    <td>@bookData.Pages</td>
-
+                    <td>@articleData.Editor</td>
                 </tr>
                 <tr>
                     <th>Alte Signatur</th>
-                    <td>@bookData.PreviousStorageLocation</td>
-                </tr>
-                <tr>
-                    <th>Erscheinungsort</th>
-                    <td>@bookData.PublicationLocation</td>
+                    <td>@articleData.PreviousStorageLocation</td>
                 </tr>
                 <tr>
                     <th>Erscheinungsjahr</th>
-                    <td>@bookData.PublicationYear</td>
+                    <td>@articleData.PublicationYear</td>
                 </tr>
             </tbody>
         </table>
@@ -82,7 +58,7 @@ else
 @code {
     private bool isAllowed;
 
-    private BookDataDTO bookData;
+    private ArticleDataDTO articleData;
 
     [Parameter]
     public int ID { get; set; }
@@ -97,8 +73,8 @@ else
         }
 
         this.isAllowed = true;
-        var assetDTO = await this.AssetFetchService.FetchSingle(new SharedDefinitions.DTOs.SingleDatabaseAssetFilterDTO() { ID = this.ID, ListType = ListType.Books });
-        this.bookData = this.ObjectMapper.Map<DatabaseAssetDTO, BookDataDTO, DatabaseAssetDTO, BookDataDTO>(assetDTO);
+        var assetDTO = await this.AssetFetchService.FetchSingle(new SharedDefinitions.DTOs.SingleDatabaseAssetFilterDTO() { ID = this.ID, ListType = ListType.Articles });
+        this.articleData = this.ObjectMapper.Map<DatabaseAssetDTO, ArticleDataDTO, DatabaseAssetDTO, ArticleDataDTO>(assetDTO);
         await base.OnInitializedAsync();
     }
 }

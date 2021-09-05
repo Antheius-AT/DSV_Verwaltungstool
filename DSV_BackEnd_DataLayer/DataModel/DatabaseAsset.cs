@@ -25,23 +25,5 @@ namespace DSV_BackEnd_DataLayer.DataModel
             get;
             set;
         }
-
-        /// <summary>
-        /// Gets or sets the previous storage location of this asset.
-        /// </summary>
-        public string PreviousStorageLocation
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the collection of images associated with this asset.
-        /// </summary>
-        public string ImageName
-        {
-            get;
-            set;
-        }
     }
 }
