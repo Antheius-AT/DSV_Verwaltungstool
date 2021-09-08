@@ -17,6 +17,7 @@ namespace DSV_BackEnd.Controllers
     using SharedDefinitions.Services;
     using SharedDefinitions.DTOs;
     using SharedDefinitions.Enumerations;
+    using SharedDefinitions;
 
     /// <summary>
     /// Controller serving as an endpoint for requesting and submitting data from and to the database.
@@ -327,11 +328,11 @@ namespace DSV_BackEnd.Controllers
         /// <summary>
         /// Persists a book in the underlying database.
         /// </summary>
-        /// <param name="book">The book to persist.</param>
+        /// <param name="bookData">The book to persist.</param>
         /// <returns>An action result indicating whether the operation was a success.</returns>
         [HttpPost]
         [Route("persist/book")]
-        public async Task<IActionResult> PersistBookAsync([FromBody]Book book, string token)
+        public async Task<IActionResult> PersistBookAsync([FromBody]BookDataDTO bookData, string token)
         {
             if (token == null)
                 return BadRequest("Authorization token must not be null.");
@@ -341,9 +342,10 @@ namespace DSV_BackEnd.Controllers
             if (!authorized)
                 return Unauthorized();
 
-            if (book == null)
+            if (bookData == null)
                 return BadRequest("Book to persist was null.");
 
+            var book = this.mapper.Map<BookDataDTO, Book, DummyType, DummyType>(bookData);
             var operationSuccess = await this.databaseService.PersistBookAsync(book);
 
             return operationSuccess ? Ok() : StatusCode(400);
@@ -352,11 +354,11 @@ namespace DSV_BackEnd.Controllers
         /// <summary>
         /// Persists an article in the underlying database.
         /// </summary>
-        /// <param name="article">The article to persist.</param>
+        /// <param name="articleDTO">The article to persist.</param>
         /// <returns>An action result indicating whether the operation was a success.</returns>
         [HttpPost]
         [Route("persist/article")]
-        public async Task<IActionResult> PersistArticleAsync([FromBody]Article article, string token)
+        public async Task<IActionResult> PersistArticleAsync([FromBody]ArticleDataDTO articleDTO, string token)
         {
             if (token == null)
                 return BadRequest("Authorization token must not be null.");
@@ -366,9 +368,10 @@ namespace DSV_BackEnd.Controllers
             if (!authorized)
                 return Unauthorized();
 
-            if (article == null)
+            if (articleDTO == null)
                 return BadRequest("Article to persist was null.");
 
+            var article = this.mapper.Map<ArticleDataDTO, Article, DummyType, DummyType>(articleDTO);
             var operationSuccess = await this.databaseService.PersistArticleAsync(article);
 
             return operationSuccess ? Ok() : StatusCode(400);
@@ -377,11 +380,11 @@ namespace DSV_BackEnd.Controllers
         /// <summary>
         /// Uploads an image asynchronously and stores it in the database.
         /// </summary>
-        /// <param name="image">The image to upload.</param>
+        /// <param name="imageDTO">The image to upload.</param>
         /// <returns>A task handling the logic of saving the image.</returns>
         [HttpPost]
-        [Route("upload/image")]
-        public async Task<IActionResult> UploadImageAsync([FromBody]Image image, string token)
+        [Route("persist/image")]
+        public async Task<IActionResult> UploadImageAsync([FromBody]ImageDataDTO imageDTO, string token)
         {
             if (token == null)
                 return BadRequest("Authorization token must not be null.");
@@ -391,9 +394,10 @@ namespace DSV_BackEnd.Controllers
             if (!authorized)
                 return Unauthorized();
 
-            if (image == null)
+            if (imageDTO == null)
                 return BadRequest("Image to upload was null.");
 
+            var image = this.mapper.Map<ImageDataDTO, Image, DummyType, DummyType>(imageDTO);
             var operationSuccess = await this.databaseService.PersistImageAsync(image);
 
             return operationSuccess ? Ok() : StatusCode(400);

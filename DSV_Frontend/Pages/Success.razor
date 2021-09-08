@@ -1,0 +1,5 @@
+﻿@page "/success"
+@inject NavigationManager NavManager;
+ 
+<h1>Success</h1>
+<DSV_Frontend.UI_Controls.FormControls.FPButton Text="Zurück zur Ansicht" OnClick="@(() => this.NavManager.NavigateTo("/assetlist"))"></DSV_Frontend.UI_Controls.FormControls.FPButton>

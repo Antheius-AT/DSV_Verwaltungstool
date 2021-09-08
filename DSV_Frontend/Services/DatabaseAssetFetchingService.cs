@@ -35,11 +35,6 @@ namespace DSV_Frontend.Services
         private AppState appState;
 
         /// <summary>
-        /// A mapping service capable of mapping types into each other.
-        /// </summary>
-        private IObjectMappingService mapper;
-
-        /// <summary>
         /// Serialization service capable of serializing and deserializing objects to string format.
         /// </summary>
         private IObjectSerializationService serializationService;
@@ -49,7 +44,6 @@ namespace DSV_Frontend.Services
             this.resourceRequestService = resourceRequestService;
             this.configuration = configuration;
             this.appState = appstate;
-            this.mapper = objectMapper;
             this.serializationService = serializationService;
         }
 
