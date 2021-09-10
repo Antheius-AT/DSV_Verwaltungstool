@@ -49,7 +49,7 @@ else
                 <FPArticleList ViewModel="@(this.ObjectMapper.Map<IEnumerable<DatabaseAssetDTO>, ArticleListViewModel, DatabaseAssetDTO, ArticleDataDTO>(this.displayedAssets))"></FPArticleList>
                 break;
             case ListType.Other:
-                <FPImageList ViewModel="@(this.ObjectMapper.Map<IEnumerable<DatabaseAssetDTO>, ImageListViewModel, DatabaseAssetDTO, ImageDataDTO>(this.displayedAssets))"></FPImageList>
+                <FPNoData></FPNoData>
                 break;
             default:
                 break;

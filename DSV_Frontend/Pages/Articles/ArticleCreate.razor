@@ -16,6 +16,10 @@
 }
 else
 {
+ <div class="mb-3">
+        <DSV_Frontend.UI_Controls.FormControls.Buttons.FPReturnButton OnClick="@(() => this.NavManager.NavigateTo("/assetlist"))"></DSV_Frontend.UI_Controls.FormControls.Buttons.FPReturnButton>
+    </div>
+
 <EditForm EditContext="@this.editContext">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <table class="table table-striped table-bordered table-hover">

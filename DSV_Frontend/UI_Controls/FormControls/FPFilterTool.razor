@@ -68,7 +68,7 @@
 
 
 @code {
-    private IEnumerable<ListType> listTypes = Enum.GetValues<ListType>();
+    private IEnumerable<ListType> listTypes;
 
     private MultipleDatabaseAssetFilterDTO filter;
 
@@ -79,6 +79,7 @@
 
     protected override Task OnInitializedAsync()
     {
+        this.listTypes = Enum.GetValues<ListType>().Where(p => p != ListType.Other);
         this.filter = new MultipleDatabaseAssetFilterDTO();
         this.filter.BookFilter = new BookFilterDTO();
         this.filter.ArticleFilter = new ArticleFilterDTO();
