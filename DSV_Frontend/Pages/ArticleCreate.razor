@@ -60,6 +60,12 @@ else
                     <FPInputText @bind-Value="this.dataModel.AdditionalComments"></FPInputText>
                 </td>
             </tr>
+            <tr>
+                <th>Bild hochladen</th>
+                <td>
+                    <RadzenFileInput @bind-Value="this.dataModel.ImageDataBase64Encoded" ChooseText="Datei auswählen" TValue="string"></RadzenFileInput>
+                </td>
+            </tr>
         </tbody>
     </table>
 

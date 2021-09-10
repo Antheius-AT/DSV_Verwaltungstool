@@ -19,13 +19,7 @@ else
 {
     if (this.bookData != null)
     {
-<div class="row">
-    <div class="col-12 col-lg-4 col-md-12 col-sm-12 mt-3">
-        <FPCard>
-            <FPDisplayImage ImageBase64String="@this.bookData.ImageDataBase64Encoded"></FPDisplayImage>
-        </FPCard>
-    </div>
-    <div class="col-12 col-lg-8 col-md-12 col-sm-12 mt-3">
+
         <table class="table table-striped table-bordered table-hover">
             <tbody>
                 <tr>
@@ -79,11 +73,14 @@ else
                     <th>Zusätzliche Kommentare</th>
                     <td>@bookData.AdditionalComments</td>
                 </tr>
+                <tr>
+                    <th>Gespeichertes Bild</th>
+                    <td>
+                        <FPDisplayImage ImageBase64String="@this.bookData.ImageDataBase64Encoded"></FPDisplayImage>
+                    </td>
+                </tr>
             </tbody>
         </table>
-    </div>
-</div>
-
     }
     else
     {

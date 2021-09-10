@@ -49,6 +49,12 @@ else
                     <th>Zusätzliche Kommentare</th>
                     <td>@articleData.AdditionalComments</td>
                 </tr>
+                <tr>
+                    <th>Gespeichertes Bild</th>
+                    <td>
+                        <FPDisplayImage ImageBase64String="@this.articleData.ImageDataBase64Encoded"></FPDisplayImage>
+                    </td>
+                </tr>
             </tbody>
         </table>
     }

@@ -7,7 +7,7 @@
         @foreach (var item in this.ViewModel.Articles)
         {
             <div class="mt-2 col-lg-4 col-md-6 col-sm-12">
-                <FPViewData NavigationURI="@($"/details/article/{item.AssetID}")" IsClickable="true" Display="@($"Artikel ID: {item.AssetID}\nTitel: {item.Title}\nAutor: {item.Author}")"></FPViewData>
+                <FPViewData NavigationURI="@($"/details/article/{item.AssetID}")" IsClickable="true" Display="@($"Artikel ID: {item.AssetID}\nTitel: {item.Title}\nAutor: {item.Author}")" ImageBase64String="@item.ImageDataBase64Encoded"></FPViewData>
             </div>
         }
     </div>

@@ -98,7 +98,7 @@ else
             <tr>
                 <th>Bild hochladen</th>
                 <td>
-                    <RadzenFileInput @bind-Value="this.dataModel.ImageDataBase64Encoded" ChooseText="Datei auswählen" Error="@(error => this.HandleError(error, "FileInput"))" Change="@(args => this.HandleChanged(args, "FileInput"))" TValue="string"></RadzenFileInput>
+                    <RadzenFileInput @bind-Value="this.dataModel.ImageDataBase64Encoded" ChooseText="Datei auswählen" TValue="string"></RadzenFileInput>
                 </td>
             </tr>
         </tbody>
@@ -115,16 +115,6 @@ else
     private bool isAllowed;
     private BookDataDTO dataModel;
     private EditContext editContext;
-
-    private void HandleChanged(string value, string name)
-    {
-        return;
-    }
-
-    private void HandleError(UploadErrorEventArgs error, string name)
-    {
-        return;
-    }
 
     protected override async Task OnInitializedAsync()
     {
