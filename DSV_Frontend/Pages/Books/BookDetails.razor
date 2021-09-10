@@ -19,8 +19,13 @@ else
 {
     if (this.bookData != null && !this.isEditing)
     {
-        <div class="mt-3">
-            <DSV_Frontend.UI_Controls.FormControls.Buttons.FPEditButton OnClick="@(() => this.isEditing = true)" Text="Bearbeiten"></DSV_Frontend.UI_Controls.FormControls.Buttons.FPEditButton>
+        <div class="row mb-3">
+            <div class="ml-3">
+                <DSV_Frontend.UI_Controls.FormControls.Buttons.FPReturnButton OnClick="@(() => this.NavManager.NavigateTo("/assetlist"))"></DSV_Frontend.UI_Controls.FormControls.Buttons.FPReturnButton>
+            </div>
+            <div class="ml-3">
+                <DSV_Frontend.UI_Controls.FormControls.Buttons.FPEditButton OnClick="@(() => this.isEditing = true)" Text="Bearbeiten"></DSV_Frontend.UI_Controls.FormControls.Buttons.FPEditButton>
+            </div>
         </div>
 
         <DSV_Frontend.UI_Controls.Display.Book.FPViewBook BookData="@this.bookData"></DSV_Frontend.UI_Controls.Display.Book.FPViewBook>

@@ -6,6 +6,7 @@
 @using SharedDefinitions.Services
 @using SharedDefinitions.DTOs
 @using DSV_Frontend.UI_Controls.Display.Article
+@using DSV_Frontend.UI_Controls.FormControls.Buttons
 
 @inject IRouteGuardService RouteGuardService
 @inject NavigationManager NavManager
@@ -20,10 +21,15 @@ else
 {
     if (this.articleData != null && !this.isEditing)
     {
-
-        <div class="mt-3">
-            <DSV_Frontend.UI_Controls.FormControls.Buttons.FPEditButton OnClick="@(() => this.isEditing = true)" Text="Bearbeiten"></DSV_Frontend.UI_Controls.FormControls.Buttons.FPEditButton>
+        <div class="row mb-3">
+            <div class="ml-3">
+                <FPReturnButton OnClick="@(() => this.NavManager.NavigateTo("/assetlist"))"></FPReturnButton>
+            </div>
+            <div class="ml-3">
+                <DSV_Frontend.UI_Controls.FormControls.Buttons.FPEditButton OnClick="@(() => this.isEditing = true)" Text="Bearbeiten"></DSV_Frontend.UI_Controls.FormControls.Buttons.FPEditButton>
+            </div>
         </div>
+
 
         <FPViewArticle ArticleData="@this.articleData"></FPViewArticle>
     }
