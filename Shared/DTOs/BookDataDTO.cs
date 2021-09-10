@@ -115,7 +115,7 @@ namespace SharedDefinitions.DTOs
         /// </summary>
         [Required(ErrorMessage = "ISBN darf nicht leer sein")]
         [MinLength(10, ErrorMessage = "ISBN muss mindestens 10 Zeichen lang sein")]
-        [MaxLength(13, ErrorMessage = "ISBN darf nicht länger als 13 Zeichen sein")]
+        [MaxLength(17, ErrorMessage = "ISBN darf nicht länger als 17 Zeichen sein")]
         public string ISBN
         {
             get;
