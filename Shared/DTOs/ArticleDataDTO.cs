@@ -84,5 +84,19 @@ namespace SharedDefinitions.DTOs
             get;
             set;
         }
+
+        public static ArticleDataDTO CreateDeepCopy(ArticleDataDTO data)
+        {
+            var clone = (ArticleDataDTO)data.MemberwiseClone();
+
+            clone.Author = string.Copy(data.Author ?? string.Empty);
+            clone.AdditionalComments = string.Copy(data.AdditionalComments ?? string.Empty);
+            clone.Editor = string.Copy(data.Editor ?? string.Empty);
+            clone.ImageDataBase64Encoded = string.Copy(data.ImageDataBase64Encoded ?? string.Empty);
+            clone.PreviousStorageLocation = string.Copy(data.PreviousStorageLocation ?? string.Empty);
+            clone.Title = string.Copy(data.Title ?? string.Empty);
+
+            return clone;
+        }
     }
 }

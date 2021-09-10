@@ -18,10 +18,11 @@ namespace DSV_BackEnd.Controllers
     using SharedDefinitions.DTOs;
     using SharedDefinitions.Enumerations;
     using SharedDefinitions;
+using System.Net;
 
-    /// <summary>
-    /// Controller serving as an endpoint for requesting and submitting data from and to the database.
-    /// </summary>
+/// <summary>
+/// Controller serving as an endpoint for requesting and submitting data from and to the database.
+/// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class DataQueryController : ControllerBase
@@ -407,11 +408,11 @@ namespace DSV_BackEnd.Controllers
         /// Modifies a book and updates its information.
         /// </summary>
         /// <param name="bookID">The ID of the book to be modified.</param>
-        /// <param name="updatedBook">The updated book data.</param>
+        /// <param name="updatedBookData">The updated book data.</param>
         /// <returns>A task handling the logic of modifying the book.</returns>
         [HttpPut]
         [Route("modify/book")]
-        public async Task<IActionResult> ModifyBookAsync(int bookID, [FromBody]Book updatedBook, string token)
+        public async Task<IActionResult> ModifyBookAsync(int bookID, [FromBody]BookDataDTO updatedBookData, string token)
         {
             if (token == null)
                 return BadRequest("Authorization token must not be null.");
@@ -421,10 +422,11 @@ namespace DSV_BackEnd.Controllers
             if (!authorized)
                 return Unauthorized();
 
-            if (updatedBook == null)
+            if (updatedBookData == null)
                 return BadRequest("Updated book must not be null.");
 
-            var success = await this.databaseService.ModifyBookAsync(bookID, updatedBook);
+            var book = this.mapper.Map<BookDataDTO, Book, DummyType, DummyType>(updatedBookData);
+            var success = await this.databaseService.ModifyBookAsync(bookID, book);
 
             return success ? Ok() : StatusCode(400);
         }
@@ -433,11 +435,11 @@ namespace DSV_BackEnd.Controllers
         /// Modifies an article and updates its information.
         /// </summary>
         /// <param name="articleID">The ID of the article to be modified.</param>
-        /// <param name="updatedArticle">The updated article data.</param>
+        /// <param name="updatedArticleData">The updated article data.</param>
         /// <returns>A task handling the logic of modifying the article.</returns>
         [HttpPut]
         [Route("modify/article")]
-        public async Task<IActionResult> ModifyArticleAsync(int articleID, [FromBody]Article updatedArticle, string token)
+        public async Task<IActionResult> ModifyArticleAsync(int articleID, [FromBody]ArticleDataDTO updatedArticleData, string token)
         {
             if (token == null)
                 return BadRequest("Authorization token must not be null.");
@@ -447,10 +449,11 @@ namespace DSV_BackEnd.Controllers
             if (!authorized)
                 return Unauthorized();
 
-            if (updatedArticle == null)
+            if (updatedArticleData == null)
                 return BadRequest("Updated book must not be null.");
 
-            var success = await this.databaseService.ModifyArticleAsync(articleID, updatedArticle);
+            var article = this.mapper.Map<ArticleDataDTO, Article, DummyType, DummyType>(updatedArticleData);
+            var success = await this.databaseService.ModifyArticleAsync(articleID, article);
 
             return success ? Ok() : StatusCode(400);
         }

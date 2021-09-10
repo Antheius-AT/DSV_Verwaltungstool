@@ -7,7 +7,9 @@
 @using SharedDefinitions.DTOs
 @using SharedDefinitions.Enumerations
 @using SharedDefinitions.Services;
-
+@using DSV_Frontend.Pages.Books;
+@using DSV_Frontend.Pages.Articles;
+  
 @inject IObjectMappingService ObjectMapper
 @inject IAssetFetchingService AssetFetchingService
 @inject IRouteGuardService RouteGuardService
@@ -26,7 +28,7 @@ else
 
     <div class="row">
         <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
-            <FPButton Text="Neues Medium" OnClick="@this.CreateNew"></FPButton>
+            <DSV_Frontend.UI_Controls.FormControls.Buttons.FPAddButton IconName="add" Text="Neues Medium" OnClick="@this.CreateNew"></DSV_Frontend.UI_Controls.FormControls.Buttons.FPAddButton>
         </div>
     </div>
     <div class="row">

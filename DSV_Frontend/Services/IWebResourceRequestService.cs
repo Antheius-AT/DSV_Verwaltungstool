@@ -8,6 +8,7 @@ namespace DSV_Frontend.Services
 {
     using System.Threading.Tasks;
     using DSV_Frontend.Data;
+    using DSV_Frontend.Enums;
 
     /// <summary>
     /// Represent a service capable of requesting web resources.
@@ -28,6 +29,6 @@ namespace DSV_Frontend.Services
         /// <param name="uri">The uri of the remote endpoint.</param>
         /// <returns>An object containing information about whether or not the request was 
         /// a success, as well as any returned data.</returns>
-        public Task<WebResourceResponse> SubmitResourceAsync<T>(string uri, T data);
+        public Task<WebResourceResponse> SubmitResourceAsync<T>(string uri, T data, HttpSubmitMethod method);
     }
 }

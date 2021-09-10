@@ -26,10 +26,19 @@ namespace DSV_Frontend.Services
         Task<bool> SubmitArticleAsync(ArticleDataDTO article);
 
         /// <summary>
-        /// Sends image data to the server to be persisted.
+        /// Sends modified book data to the server to be persisted.
         /// </summary>
-        /// <param name="image">The data.</param>
+        /// <param name="originalAssetID">The ID of the original asset.</param>
+        /// <param name="book">The data.</param>
         /// <returns></returns>
-        Task<bool> SubmitImageAsync(ImageDataDTO image);
+        Task<bool> SubmitModifiedBookAsync(int originalAssetID, BookDataDTO book);
+
+        /// <summary>
+        /// Sends modified article data to the server to be persisted.
+        /// </summary>
+        /// <param name="originalAssetID">The ID of the original asset.</param>
+        /// <param name="article">The data.</param>
+        /// <returns></returns>
+        Task<bool> SubmitModifiedArticleAsync(int originalAssetID, ArticleDataDTO article);
     }
 }

@@ -1,0 +1,54 @@
+﻿@inherits ComponentBase
+
+@using DSV_Frontend.UI_Controls.Display
+@using SharedDefinitions.DTOs
+
+@if (this.ArticleData != null)
+{
+    <table class="table table-striped table-bordered table-hover mt-3">
+        <tbody>
+            <tr>
+                <th>ID</th>
+                <td>@ArticleData.AssetID</td>
+            </tr>
+            <tr>
+                <th>Autor</th>
+                <td>@ArticleData.Author</td>
+            </tr>
+            <tr>
+                <th>Titel</th>
+                <td>@ArticleData.Title</td>
+            </tr>
+            <tr>
+                <th>Verlag</th>
+                <td>@ArticleData.Editor</td>
+            </tr>
+            <tr>
+                <th>Alte Signatur</th>
+                <td>@ArticleData.PreviousStorageLocation</td>
+            </tr>
+            <tr>
+                <th>Erscheinungsjahr</th>
+                <td>@ArticleData.PublicationYear</td>
+            </tr>
+            <tr>
+                <th>Zusätzliche Kommentare</th>
+                <td>@ArticleData.AdditionalComments</td>
+            </tr>
+            <tr>
+                <th>Gespeichertes Bild</th>
+                <td>
+                    <FPDisplayImage ImageBase64String="@this.ArticleData.ImageDataBase64Encoded"></FPDisplayImage>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <FPNoData></FPNoData>
+}
+@code {
+    [Parameter]
+    public ArticleDataDTO ArticleData { get; set; }
+}

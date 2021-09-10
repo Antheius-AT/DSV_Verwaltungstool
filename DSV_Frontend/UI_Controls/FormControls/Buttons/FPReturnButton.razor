@@ -1,0 +1,12 @@
+﻿@inherits FPButtonBase
+
+<RadzenButton Click="@this.OnClick" Icon="@this.IconName" Text="@this.Text" BusyText="@this.BusyText"></RadzenButton>
+
+@code {
+    protected override Task OnInitializedAsync()
+    {
+        this.IconName = "arrow_back";
+
+        return base.OnInitializedAsync();
+    }
+}

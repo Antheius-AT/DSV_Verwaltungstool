@@ -1,0 +1,103 @@
+﻿@inherits ComponentBase
+
+@using DSV_Frontend.Services
+@using SharedDefinitions.DTOs
+@using DSV_Frontend.UI_Controls.FormControls
+ 
+@inject NavigationManager NavManager
+@inject IDatabaseAssetSubmitService SubmitService
+
+
+<EditForm EditContext="@this.editContext">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <table class="table table-striped table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th>Autor</th>
+                <td>
+                    <ValidationMessage For="() => this.ArticleData.Author"></ValidationMessage>
+                    <FPInputText @bind-Value="this.ArticleData.Author"></FPInputText>
+                </td>
+            </tr>
+            <tr>
+                <th>Titel</th>
+                <td>
+                    <ValidationMessage For="() => this.ArticleData.Title"></ValidationMessage>
+                    <FPInputText @bind-Value="this.ArticleData.Title"></FPInputText>
+                </td>
+            </tr>
+            <tr>
+                <th>Verlag</th>
+                <td>
+                    <ValidationMessage For="() => this.ArticleData.Editor"></ValidationMessage>
+                    <FPInputText @bind-Value="this.ArticleData.Editor"></FPInputText>
+                </td>
+            </tr>
+            <tr>
+                <th>Alte Signatur</th>
+                <td>
+                    <ValidationMessage For="() => this.ArticleData.PreviousStorageLocation"></ValidationMessage>
+                    <FPInputText @bind-Value="this.ArticleData.PreviousStorageLocation"></FPInputText>
+                </td>
+            </tr>
+            <tr>
+                <th>Erscheinungsjahr</th>
+                <td>
+                    <ValidationMessage For="() => this.ArticleData.PublicationYear"></ValidationMessage>
+                    <FPInputInteger @bind-Value="this.ArticleData.PublicationYear"></FPInputInteger>
+                </td>
+            </tr>
+            <tr>
+                <th>Zusätzliche Kommentare</th>
+                <td>
+                    <FPInputText @bind-Value="this.ArticleData.AdditionalComments"></FPInputText>
+                </td>
+            </tr>
+            <tr>
+                <th>Bild hochladen</th>
+                <td>
+                    <RadzenFileInput @bind-Value="this.ArticleData.ImageDataBase64Encoded" ChooseText="Datei auswählen" TValue="string"></RadzenFileInput>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="mb-3">
+        <DSV_Frontend.UI_Controls.FormControls.Buttons.FPCancelButton Text="Abbrechen" OnClick="@(async () => await this.OnCancel.InvokeAsync())"></DSV_Frontend.UI_Controls.FormControls.Buttons.FPCancelButton>
+        <DSV_Frontend.UI_Controls.FormControls.Buttons.FPSaveButton Text="Speichern" OnClick="@(async () => await this.SaveModelAsync())"></DSV_Frontend.UI_Controls.FormControls.Buttons.FPSaveButton>
+    </div>
+</EditForm>
+
+
+@code {
+    private EditContext editContext;
+
+    [Parameter]
+    public ArticleDataDTO ArticleData { get; set; }
+
+    [Parameter]
+    public EventCallback OnAfterSave { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.editContext = new EditContext(this.ArticleData);
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task SaveModelAsync()
+    {
+        if (this.editContext.Validate())
+        {
+            var success = await this.SubmitService.SubmitModifiedArticleAsync(this.ArticleData.AssetID, this.ArticleData);
+
+            if (this.OnAfterSave.HasDelegate)
+            {
+                await this.OnAfterSave.InvokeAsync();
+            }
+        }
+    }
+}

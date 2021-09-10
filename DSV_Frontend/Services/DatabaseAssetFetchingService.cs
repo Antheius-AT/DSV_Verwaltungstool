@@ -9,6 +9,7 @@ namespace DSV_Frontend.Services
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using DSV_Frontend.Enums;
     using DSV_Frontend.Shared;
     using Microsoft.Extensions.Configuration;
     using SharedDefinitions.DTOs;
@@ -54,7 +55,7 @@ namespace DSV_Frontend.Services
         /// <returns>A collection of DTOs containing asset data.</returns>
         public async Task<ICollection<DatabaseAssetDTO>> FetchAssets(MultipleDatabaseAssetFilterDTO filter)
         {
-            var response = await this.resourceRequestService.SubmitResourceAsync($"{this.configuration["BASEURI"]}dataquery/fetchlist?token={this.appState.AuthenticationToken}", filter);
+            var response = await this.resourceRequestService.SubmitResourceAsync($"{this.configuration["BASEURI"]}dataquery/fetchlist?token={this.appState.AuthenticationToken}", filter, HttpSubmitMethod.Post);
 
             // Throw exception or do something but dont return null thats only for testing.
             if (!response.IsSuccess)
@@ -67,7 +68,7 @@ namespace DSV_Frontend.Services
 
         public async Task<DatabaseAssetDTO> FetchSingle(SingleDatabaseAssetFilterDTO filter)
         {
-            var response = await this.resourceRequestService.SubmitResourceAsync($"{this.configuration["BASEURI"]}dataquery/fetchsingle?token={this.appState.AuthenticationToken}", filter);
+            var response = await this.resourceRequestService.SubmitResourceAsync($"{this.configuration["BASEURI"]}dataquery/fetchsingle?token={this.appState.AuthenticationToken}", filter, HttpSubmitMethod.Post);
 
             if (!response.IsSuccess)
                 throw new Exception("Fetch single asset failure");

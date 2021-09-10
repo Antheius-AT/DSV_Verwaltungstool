@@ -3,6 +3,7 @@
 @using DSV_Frontend.Services
 @using DSV_Frontend.UI_Controls.Display
 @using DSV_Frontend.UI_Controls.FormControls
+@using DSV_Frontend.UI_Controls.FormControls.Buttons 
 @using SharedDefinitions.DTOs
 
 @inject IRouteGuardService RouteGuardService
@@ -69,7 +70,7 @@ else
         </tbody>
     </table>
 
-    <FPButton Text="Speichern" OnClick="@(async () => await this.SaveModelAsync())"></FPButton>
+    <FPSaveButton Text="Speichern" OnClick="@(async () => await this.SaveModelAsync())"></FPSaveButton>
 </EditForm>
 }
 

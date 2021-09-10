@@ -6,10 +6,12 @@
 //-----------------------------------------------------------------------
 namespace DSV_Frontend.Services
 {
+    using System;
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using DSV_Frontend.Data;
+    using DSV_Frontend.Enums;
 
     /// <summary>
     /// Represent a service capable of requesting web resources via http.
@@ -43,10 +45,22 @@ namespace DSV_Frontend.Services
             return response;
         }
 
-        public async Task<WebResourceResponse> SubmitResourceAsync<T>(string uri, T data)
+        public async Task<WebResourceResponse> SubmitResourceAsync<T>(string uri, T data, HttpSubmitMethod method)
         {
             WebResourceResponse resourceResponse;
-            var requestResponse = await this.httpClient.PostAsJsonAsync(uri, data);
+            HttpResponseMessage requestResponse;
+
+            switch (method)
+            {
+                case HttpSubmitMethod.Post:
+                    requestResponse = await this.httpClient.PostAsJsonAsync(uri, data);
+                    break;
+                case HttpSubmitMethod.Put:
+                    requestResponse = await this.httpClient.PutAsJsonAsync(uri, data);
+                    break;
+                default:
+                    throw new ArgumentException(nameof(method), "Invalid submit method");
+            }
 
             if (!requestResponse.IsSuccessStatusCode)
                 resourceResponse = new WebResourceResponse(false, null);

@@ -9,6 +9,7 @@ namespace DSV_Frontend.Services
     using System;
     using System.Threading.Tasks;
     using DSV_Frontend.Data;
+    using DSV_Frontend.Enums;
     using DSV_Frontend.Shared;
     using Microsoft.Extensions.Configuration;
     using SharedDefinitions.DTOs;
@@ -53,7 +54,7 @@ namespace DSV_Frontend.Services
             if (userData == null)
                 throw new ArgumentNullException(nameof(userData), "User data must not be null.");
 
-            var result = await this.webRequestService.SubmitResourceAsync<UserDataDTO>(string.Concat(this.configuration["BASEURI"], "authentication/", "authenticate"), userData);
+            var result = await this.webRequestService.SubmitResourceAsync<UserDataDTO>(string.Concat(this.configuration["BASEURI"], "authentication/", "authenticate"), userData, HttpSubmitMethod.Post);
 
             return result;
         }
@@ -77,7 +78,7 @@ namespace DSV_Frontend.Services
                 AuthenticationToken = this.appState.AuthenticationToken
             };
 
-            var response = await this.webRequestService.SubmitResourceAsync(string.Concat(this.configuration["BASEURI"], "authentication/", "logout"), logoutDTO);
+            var response = await this.webRequestService.SubmitResourceAsync(string.Concat(this.configuration["BASEURI"], "authentication/", "logout"), logoutDTO, HttpSubmitMethod.Post);
 
             return response.IsSuccess;
         }

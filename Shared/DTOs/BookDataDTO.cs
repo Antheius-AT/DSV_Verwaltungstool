@@ -146,5 +146,24 @@ namespace SharedDefinitions.DTOs
             get;
             set;
         }
+
+        public static BookDataDTO CreateDeepCopy(BookDataDTO data)
+        {
+            var clone = (BookDataDTO)data.MemberwiseClone();
+
+            clone.Author = string.Copy(data.Author ?? string.Empty);
+            clone.AdditionalComments = string.Copy(data.AdditionalComments ?? string.Empty);
+            clone.Editor = string.Copy(data.Editor ?? string.Empty);
+            clone.ImageDataBase64Encoded = string.Copy(data.ImageDataBase64Encoded ?? string.Empty);
+            clone.ISBN = string.Copy(data.ISBN ?? string.Empty);
+            clone.Pages = string.Copy(data.Pages ?? string.Empty);
+            clone.PreviousStorageLocation = string.Copy(data.PreviousStorageLocation ?? string.Empty);
+            clone.PublicationLocation = string.Copy(data.PublicationLocation ?? string.Empty);
+            clone.Publisher = string.Copy(data.Publisher ?? string.Empty);
+            clone.SubLevelTitle = string.Copy(data.SubLevelTitle ?? string.Empty);
+            clone.Title = string.Copy(data.Title ?? string.Empty);
+
+            return clone;
+        }
     }
 }

@@ -508,6 +508,7 @@ namespace DSV_Backend_ServiceLayer
             toModify.PreviousStorageLocation = updatedArticle.PreviousStorageLocation;
             toModify.PublicationYear = updatedArticle.PublicationYear;
             toModify.Title = updatedArticle.Title;
+            toModify.AdditionalComments = updatedArticle.AdditionalComments;
         }
 
         /// <summary>

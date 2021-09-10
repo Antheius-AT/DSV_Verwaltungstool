@@ -1,7 +1,7 @@
 ﻿@using SharedDefinitions.Enumerations
 @using SharedDefinitions.DTOs
 @using DSV_Frontend.Services
-@using DSV_Frontend.UI_Controls.FormControls
+@using DSV_Frontend.UI_Controls.FormControls.Buttons
 
 @inject IAssetFetchingService AssetFetchService
 @inject AppState AppState
@@ -59,7 +59,7 @@
             </div>
             <div class="row ml-3">
                 <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
-                    <FPButton Text="Suchen" BusyText="Filter werden angewandt" OnClick="@(() => this.ApplyFilter())"></FPButton>
+                    <FPSearchButton Text="Suchen" BusyText="Filter werden angewandt" OnClick="@(() => this.ApplyFilter())"></FPSearchButton>
                 </div>
             </div>
         </EditForm>
