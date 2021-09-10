@@ -103,9 +103,9 @@ namespace DSV_BackEnd_DataLayer.DataModel
         }
 
         /// <summary>
-        /// Gets or sets the collection of images associated with this asset.
+        /// Gets or sets the image data associated with this book.
         /// </summary>
-        public string ImageName
+        public string ImageDataBase64Encoded
         {
             get;
             set;

@@ -95,17 +95,36 @@ else
                     <FPInputText @bind-Value="this.dataModel.AdditionalComments"></FPInputText>
                 </td>
             </tr>
+            <tr>
+                <th>Bild hochladen</th>
+                <td>
+                    <RadzenFileInput @bind-Value="this.dataModel.ImageDataBase64Encoded" ChooseText="Datei auswählen" Error="@(error => this.HandleError(error, "FileInput"))" Change="@(args => this.HandleChanged(args, "FileInput"))" TValue="string"></RadzenFileInput>
+                </td>
+            </tr>
         </tbody>
     </table>
 
-    <FPButton Text="Speichern" OnClick="@(async () => await this.SaveModelAsync())"></FPButton>
+    <div class="mb-3">
+        <FPButton Text="Speichern" OnClick="@(async () => await this.SaveModelAsync())"></FPButton>
+    </div>
 </EditForm>
 }
 
 @code {
+    private EventCallback<ChangeEventArgs> FileChangedCallback;
     private bool isAllowed;
     private BookDataDTO dataModel;
     private EditContext editContext;
+
+    private void HandleChanged(string value, string name)
+    {
+        return;
+    }
+
+    private void HandleError(UploadErrorEventArgs error, string name)
+    {
+        return;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -118,6 +137,7 @@ else
 
         this.dataModel = new BookDataDTO();
         this.editContext = new EditContext(this.dataModel);
+
         this.isAllowed = true;
         await base.OnInitializedAsync();
     }

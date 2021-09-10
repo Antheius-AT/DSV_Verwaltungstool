@@ -6,7 +6,7 @@
 @inject IAssetFetchingService AssetFetchService
 @inject AppState AppState
 
-<DSV_Frontend.UI_Controls.Display.FPCard Label="Filtermöglichkeiten">
+<DSV_Frontend.UI_Controls.Display.FPCard IsHeaderVisible="true" Label="Filtermöglichkeiten">
     <HeaderContent>
         <RadzenDropDown Placeholder="Medientyp auswählen" FilterDelay="100" Data="this.listTypes" TValue="ListType" SelectedItemChanged="@(p => this.SelectionChanged(p))"></RadzenDropDown>
     </HeaderContent>

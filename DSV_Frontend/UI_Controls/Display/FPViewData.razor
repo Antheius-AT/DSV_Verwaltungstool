@@ -1,9 +1,9 @@
 ﻿@inject NavigationManager NavManager
 
-<FPCard OnClick="this.ExecuteClick">
+<FPCard IsHeaderVisible="false" OnClick="this.ExecuteClick">
     <div class="d-flex flex-column">
         <div class="icon p-2">
-            <img src="assets/Icons/defaulticon.jpg" style="max-width:100%; height:auto" />
+            <FPDisplayImage ImageBase64String="@this.ImageBase64String"></FPDisplayImage>
         </div>
         <div class="p-2 align-self-center">
             @foreach (var item in this.Display.Split('\n', StringSplitOptions.RemoveEmptyEntries))
@@ -29,6 +29,9 @@
 
     [Parameter]
     public string Icon { get; set; }
+
+    [Parameter]
+    public string ImageBase64String { get; set; }
 
     [Parameter]
     public Action Callback { get; set; }

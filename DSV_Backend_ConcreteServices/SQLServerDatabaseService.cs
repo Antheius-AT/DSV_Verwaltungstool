@@ -475,7 +475,7 @@ namespace DSV_Backend_ServiceLayer
 
             toModify.Author = updatedBook.Author;
             toModify.Editor = updatedBook.Editor;
-            toModify.ImageName = updatedBook.ImageName;
+            toModify.ImageDataBase64Encoded = updatedBook.ImageDataBase64Encoded;
             toModify.ISBN = updatedBook.ISBN;
             toModify.Pages = updatedBook.Pages;
             toModify.PreviousStorageLocation = updatedBook.PreviousStorageLocation;
@@ -504,7 +504,7 @@ namespace DSV_Backend_ServiceLayer
 
             toModify.Author = updatedArticle.Author;
             toModify.Editor = updatedArticle.Editor;
-            toModify.ImageName = updatedArticle.ImageName;
+            toModify.ImageDataBase64Encoded = updatedArticle.ImageDataBase64Encoded;
             toModify.PreviousStorageLocation = updatedArticle.PreviousStorageLocation;
             toModify.PublicationYear = updatedArticle.PublicationYear;
             toModify.Title = updatedArticle.Title;

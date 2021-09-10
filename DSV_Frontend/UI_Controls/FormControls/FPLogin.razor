@@ -34,8 +34,6 @@
         userDataDto.Username = args.Username;
         userDataDto.Password = args.Password;
 
-        Console.WriteLine(this.RouteGuardService.UserToken);
-
         var response = await this.AuthenticationService.AuthenticateAsync(userDataDto);
 
         if (response.IsSuccess)
