@@ -1,12 +1,12 @@
 ﻿@using DSV_Frontend.Services
-@using DSV_Frontend.UI_Controls.Display 
+@using DSV_Frontend.UI_Controls.Display
 
 @inherits FPControlBase
 
 @inject IRouteGuardService RouteGuardService
 @inject IAuthenticationService AuthenticationService
 @inject AppState AppState
-@inject NavigationManager NavigationManager    
+@inject NavigationManager NavigationManager
 
 @if (!this.HideLabel)
 {
@@ -20,14 +20,16 @@
                 <RadzenLogin AllowRegister="false" class="user-login" AllowResetPassword="false"
                              LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort"
                              UserRequired="Benutzername erforderlich" PasswordRequired="Passwort erforderlich"
-                             Login=@(args => OnLogin(args))
-                             />
+                             Login=@(args => OnLogin(args)) />
             </RadzenTemplateForm>
         </RadzenCard>
+        <FPDisplayError @ref="this.displayError"></FPDisplayError>
     </div>
 </div>
 
 @code {
+    private FPDisplayError displayError;
+
     async Task OnLogin(LoginArgs args)
     {
         var userDataDto = new SharedDefinitions.DTOs.UserDataDTO();
@@ -43,6 +45,10 @@
             this.AppState.Username = userDataDto.Username;
             this.AppState.RaiseStateChanged();
             this.NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            this.displayError.Show("Fehler beim Login. Bitte überprüfen ob die eingegebenen Daten korrekt sind und ansonsten später wieder versuchen.");
         }
     }
 }
