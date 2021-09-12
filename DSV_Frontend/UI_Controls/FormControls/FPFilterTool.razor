@@ -8,7 +8,7 @@
 
 <DSV_Frontend.UI_Controls.Display.FPCard IsHeaderVisible="true" Label="Filtermöglichkeiten">
     <HeaderContent>
-        <RadzenDropDown Placeholder="Medientyp auswählen" FilterDelay="100" Data="this.listTypes" TValue="ListType" SelectedItemChanged="@(p => this.SelectionChanged(p))"></RadzenDropDown>
+        <RadzenDropDown Placeholder="Medientyp auswählen" FilterDelay="100" Data="this.listTypes" TValue="ListType" Change="@(p => this.SelectionChanged(p))"></RadzenDropDown>
     </HeaderContent>
     <ChildContent>
         <EditForm EditContext="this.editContext">
