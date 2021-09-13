@@ -8,7 +8,7 @@
 
 <DSV_Frontend.UI_Controls.Display.FPCard IsHeaderVisible="true" Label="Filtermöglichkeiten">
     <HeaderContent>
-        <RadzenDropDown Placeholder="Medientyp auswählen" FilterDelay="100" Data="this.listTypes" TValue="ListType" Change="@(p => this.SelectionChanged(p))"></RadzenDropDown>
+        <RadzenDropDown Value="@this.AppState.ListType" Placeholder="Medientyp auswählen" FilterDelay="100" Data="this.listTypes" TValue="ListType" Change="@(p => this.SelectionChanged(p))"></RadzenDropDown>
     </HeaderContent>
     <ChildContent>
         <EditForm EditContext="this.editContext">
@@ -47,14 +47,6 @@
                     <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
                         <FPInputText PlaceHolder="Nach Herausgeber filtern.." @bind-Value="this.filter.ArticleFilter.Editor"></FPInputText>
                     </div>
-                    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
-                        <FPInputInteger PlaceHolder="Nach Erscheinungsjahr filtern.." @bind-Value="this.filter.ArticleFilter.PublicationYear"></FPInputInteger>
-                    </div>
-                }
-
-                @if (this.AppState.ListType == ListType.Other)
-                {
-
                 }
             </div>
             <div class="row ml-3">
