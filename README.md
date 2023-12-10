@@ -1,2 +1,2 @@
 # DSV_Verwaltungstool
-Verwaltungstool für den Wiener Neustädter Denkmalschutzverein.
+This is a tool I developed as a means of assisting a local union in digitally maintaining their inventory of various books.
