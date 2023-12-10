@@ -1,0 +1,54 @@
+﻿@using DSV_Frontend.Services
+@using DSV_Frontend.UI_Controls.Display
+
+@inherits FPControlBase
+
+@inject IRouteGuardService RouteGuardService
+@inject IAuthenticationService AuthenticationService
+@inject AppState AppState
+@inject NavigationManager NavigationManager
+
+@if (!this.HideLabel)
+{
+    <RadzenLabel Visible="true" Text="@this.Label"></RadzenLabel>
+}
+
+<div class="row">
+    <div class="col-xl-5">
+        <RadzenCard>
+            <RadzenTemplateForm Data=@("")>
+                <RadzenLogin AllowRegister="false" class="user-login" AllowResetPassword="false"
+                             LoginText="Einloggen" UserText="Benutzername" PasswordText="Passwort"
+                             UserRequired="Benutzername erforderlich" PasswordRequired="Passwort erforderlich"
+                             Login=@(args => OnLogin(args)) />
+            </RadzenTemplateForm>
+        </RadzenCard>
+        <FPDisplayError @ref="this.displayError"></FPDisplayError>
+    </div>
+</div>
+
+@code {
+    private FPDisplayError displayError;
+
+    async Task OnLogin(LoginArgs args)
+    {
+        var userDataDto = new SharedDefinitions.DTOs.UserDataDTO();
+        userDataDto.Username = args.Username;
+        userDataDto.Password = args.Password;
+
+        var response = await this.AuthenticationService.AuthenticateAsync(userDataDto);
+
+        if (response.IsSuccess)
+        {
+            this.AppState.AuthenticationToken = response.Data;
+            this.AppState.IsAuthenticated = true;
+            this.AppState.Username = userDataDto.Username;
+            this.AppState.RaiseStateChanged();
+            this.NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            this.displayError.Show("Fehler beim Login. Bitte überprüfen ob die eingegebenen Daten korrekt sind und ansonsten später wieder versuchen.");
+        }
+    }
+}

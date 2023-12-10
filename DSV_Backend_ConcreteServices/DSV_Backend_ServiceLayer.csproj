@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JWT" Version="8.2.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DSV_BackEnd_DataLayer\DSV_BackEnd_DataLayer.csproj" />
+    <ProjectReference Include="..\DSV_BackEnd_ServicesContracts\DSV_BackEnd_ServicesContracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="PrivateServiceHelpers\" />
+  </ItemGroup>
+
+</Project>

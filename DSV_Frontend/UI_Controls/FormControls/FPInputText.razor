@@ -1,0 +1,36 @@
+﻿@inherits FPEditFormBase
+
+@if (!this.HideLabel)
+{
+    <DSV_Frontend.UI_Controls.Display.FPLabel Text="@this.Label"></DSV_Frontend.UI_Controls.Display.FPLabel>
+}
+
+<RadzenTextBox @bind-Visible="this.IsVisible" Style="width:200px; border-radius:10px 10px" @bind-Value="@this.Value" Placeholder="@this.PlaceHolder">
+
+</RadzenTextBox>
+@code {
+    private string value;
+
+    [Parameter]
+    public string PlaceHolder { get; set; }
+
+    [Parameter]
+    public string Value
+    {
+        get
+        {
+            return this.value;
+        }
+        set
+        {
+            if (this.value != value)
+            {
+                this.value = value;
+                this.ValueChanged.InvokeAsync(this.value);
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+}

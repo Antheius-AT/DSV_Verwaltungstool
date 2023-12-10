@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DSV_BackEnd_DataLayer\DSV_BackEnd_DataLayer.csproj" />
+    <ProjectReference Include="..\Shared\SharedDefinitions.csproj" />
+  </ItemGroup>
+
+</Project>

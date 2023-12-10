@@ -1,0 +1,23 @@
+﻿@inherits ComponentBase
+@using DSV_Frontend.UI_Controls.FormControls.Buttons
+ 
+@if (this.isVisible)
+{
+<div class="alert">
+    <span class="closebtn" @onclick="@(() => this.isVisible = false)">&times;</span>
+    <strong>@this.errorText</strong>
+</div>
+}
+
+@code {
+    private bool isVisible;
+
+    private string errorText;
+
+    public void Show(string errorText)
+    {
+        this.isVisible = true;
+        this.errorText = errorText;
+        this.StateHasChanged();
+    }
+}

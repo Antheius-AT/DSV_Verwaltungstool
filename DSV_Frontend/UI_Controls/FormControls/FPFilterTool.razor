@@ -1,0 +1,98 @@
+﻿@using SharedDefinitions.Enumerations
+@using SharedDefinitions.DTOs
+@using DSV_Frontend.Services
+@using DSV_Frontend.UI_Controls.FormControls.Buttons
+
+@inject IAssetFetchingService AssetFetchService
+@inject AppState AppState
+
+<DSV_Frontend.UI_Controls.Display.FPCard IsHeaderVisible="true" Label="Filtermöglichkeiten">
+    <HeaderContent>
+        <RadzenDropDown Value="@this.AppState.ListType" Placeholder="Medientyp auswählen" FilterDelay="100" Data="this.listTypes" TValue="ListType" Change="@(p => this.SelectionChanged(p))"></RadzenDropDown>
+    </HeaderContent>
+    <ChildContent>
+        <EditForm EditContext="this.editContext">
+            <div class="row ml-3">
+                <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                    <FPInputText PlaceHolder="Stichwortsuche.." @bind-Value="this.filter.KeyphraseSearchString"></FPInputText>
+                </div>
+
+                @if (this.AppState.ListType == ListType.Books)
+                {
+                    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                        <FPInputText PlaceHolder="Nach Titel filtern.." @bind-Value="this.filter.BookFilter.Title" @bind-Value:event="ValueChanged"></FPInputText>
+                    </div>
+                    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                        <FPInputText PlaceHolder="Nach Autor filtern.." @bind-Value="this.filter.BookFilter.Author"></FPInputText>
+                    </div>
+                    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                        <FPInputText PlaceHolder="Nach ISBN filtern.." @bind-Value="this.filter.BookFilter.ISBN"></FPInputText>
+                    </div>
+                    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                        <FPInputText PlaceHolder="Nach Herausgeber filtern.." @bind-Value="this.filter.BookFilter.Publisher"></FPInputText>
+                    </div>
+                    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                        <FPInputText PlaceHolder="Nach Verlag filtern.." @bind-Value="this.filter.BookFilter.Editor"></FPInputText>
+                    </div>
+                }
+
+                @if (this.AppState.ListType == ListType.Articles)
+                {
+                    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                        <FPInputText PlaceHolder="Nach Titel filtern.." @bind-Value="this.filter.ArticleFilter.Title"></FPInputText>
+                    </div>
+                    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                        <FPInputText PlaceHolder="Nach Autor filtern.." @bind-Value="this.filter.ArticleFilter.Author"></FPInputText>
+                    </div>
+                    <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                        <FPInputText PlaceHolder="Nach Herausgeber filtern.." @bind-Value="this.filter.ArticleFilter.Editor"></FPInputText>
+                    </div>
+                }
+            </div>
+            <div class="row ml-3">
+                <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                    <FPSearchButton Text="Suchen" BusyText="Filter werden angewandt" OnClick="@(() => this.ApplyFilter())"></FPSearchButton>
+                </div>
+            </div>
+        </EditForm>
+    </ChildContent>
+</DSV_Frontend.UI_Controls.Display.FPCard>
+
+
+@code {
+    private IEnumerable<ListType> listTypes;
+
+    private MultipleDatabaseAssetFilterDTO filter;
+
+    private EditContext editContext;
+
+    [Parameter]
+    public Action<MultipleDatabaseAssetFilterDTO> InvokeFilterCallback { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.listTypes = Enum.GetValues<ListType>().Where(p => p != ListType.Other);
+        this.filter = new MultipleDatabaseAssetFilterDTO();
+        this.filter.BookFilter = new BookFilterDTO();
+        this.filter.ArticleFilter = new ArticleFilterDTO();
+        this.filter.ListType = ListType.Books;
+        this.editContext = new EditContext(this.filter);
+
+        return base.OnInitializedAsync();
+    }
+
+    private void SelectionChanged(object parameter)
+    {
+        if (parameter is not SharedDefinitions.Enumerations.ListType)
+            return;
+
+        this.filter.ResetFilter();
+        this.filter.ListType = (SharedDefinitions.Enumerations.ListType)parameter;
+        this.ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        this.InvokeFilterCallback?.Invoke(this.filter);
+    }
+}

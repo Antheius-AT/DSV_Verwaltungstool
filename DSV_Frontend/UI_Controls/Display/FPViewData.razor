@@ -1,0 +1,56 @@
+﻿@inject NavigationManager NavManager
+
+<FPCard IsHeaderVisible="false" OnClick="this.ExecuteClick">
+    <div class="d-flex flex-column">
+        <div class="icon p-2">
+            <FPDisplayImage ImageBase64String="@this.ImageBase64String"></FPDisplayImage>
+        </div>
+        <div class="p-2 align-self-center">
+            @foreach (var item in this.Display.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+            {
+                <FPLabel Text="@item"></FPLabel>
+                <br />
+            }
+        </div>
+    </div>
+</FPCard>
+
+@code {
+    private bool canClick => this.IsClickable && (this.Callback != null || this.NavigationURI != null);
+
+    [Parameter]
+    public string Display { get; set; }
+
+    [Parameter]
+    public bool IsClickable { get; set; }
+
+    [Parameter]
+    public string NavigationURI { get; set; }
+
+    [Parameter]
+    public string Icon { get; set; }
+
+    [Parameter]
+    public string ImageBase64String { get; set; }
+
+    [Parameter]
+    public Action Callback { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.Icon = "defaulticon";
+
+        return base.OnInitializedAsync();
+    }
+
+    private void ExecuteClick()
+    {
+        if (!this.canClick)
+            return;
+
+        if (this.Callback != null)
+            this.Callback.Invoke();
+        else
+            this.NavManager.NavigateTo(this.NavigationURI);
+    }
+}

@@ -1,0 +1,34 @@
+﻿@page "/"
+
+@using DSV_Frontend.UI_Controls.Display
+
+@inject DSV_Frontend.Services.IRouteGuardService RouteGuardService
+@inject NavigationManager NavigationManager
+
+@if (this.isAllowed)
+{
+    <h3>Willkommen!!!</h3>
+}
+else
+{
+    <FPLoadPage></FPLoadPage>
+}
+
+@code {
+    private bool isAllowed;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.isAllowed = false;
+
+        if (!await this.RouteGuardService.VerifySecurityToken())
+        {
+            this.NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            this.isAllowed = true;
+            await base.OnInitializedAsync();
+        }
+    }
+}

@@ -1,0 +1,79 @@
+﻿@inherits ComponentBase
+
+@using DSV_Frontend.UI_Controls.Display
+@using SharedDefinitions.DTOs
+
+
+@if (this.BookData != null)
+{
+    <table class="table table-striped table-bordered table-hover mt-3">
+        <tbody>
+            <tr>
+                <th>ID</th>
+                <td>@BookData.AssetID</td>
+            </tr>
+            <tr>
+                <th>Autor</th>
+                <td>@BookData.Author</td>
+            </tr>
+            <tr>
+                <th>Titel</th>
+                <td>@BookData.Title</td>
+            </tr>
+            <tr>
+                <th>Untertitel</th>
+                <td>@BookData.SubLevelTitle</td>
+            </tr>
+            <tr>
+                <th>Verlag</th>
+                <td>@BookData.Editor</td>
+            </tr>
+            <tr>
+                <th>Herausgeber</th>
+                <td>@BookData.Publisher</td>
+
+            </tr>
+            <tr>
+                <th>ISBN</th>
+                <td>@BookData.ISBN</td>
+
+            </tr>
+            <tr>
+                <th>Seitenanzahl</th>
+                <td>@BookData.Pages</td>
+
+            </tr>
+            <tr>
+                <th>Alte Signatur</th>
+                <td>@BookData.PreviousStorageLocation</td>
+            </tr>
+            <tr>
+                <th>Erscheinungsort</th>
+                <td>@BookData.PublicationLocation</td>
+            </tr>
+            <tr>
+                <th>Erscheinungsjahr</th>
+                <td>@BookData.PublicationYear</td>
+            </tr>
+            <tr>
+                <th>Zusätzliche Kommentare</th>
+                <td>@BookData.AdditionalComments</td>
+            </tr>
+            <tr>
+                <th>Gespeichertes Bild</th>
+                <td>
+                    <FPDisplayImage ImageBase64String="@this.BookData.ImageDataBase64Encoded"></FPDisplayImage>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <FPNoData></FPNoData>
+}
+
+@code {
+    [Parameter]
+    public BookDataDTO BookData { get; set; }
+}

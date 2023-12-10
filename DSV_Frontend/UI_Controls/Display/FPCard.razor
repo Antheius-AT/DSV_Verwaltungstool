@@ -1,0 +1,56 @@
+﻿@inherits FPControlBase
+<div>
+    <RadzenCard Style="@(this.OnClick.HasDelegate ? "cursor:pointer" : "")" @onclick="@this.OnClick">
+        <div class="row">
+            <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                @if (!this.HideLabel)
+                {
+                    <FPLabel Text="@Label"></FPLabel>
+                }
+            </div>
+
+            @if (this.IsHeaderVisible)
+            {
+                <div class="col-12 col-lg-4 col-md-6 ml-3 mt-2">
+                    @if (this.HeaderContent != null)
+                    {
+                        @this.HeaderContent
+                    }
+                </div>
+                <hr />
+            }
+
+        </div>
+
+        <div class="row">
+            @if (this.ChildContent != null)
+            {
+                @this.ChildContent
+            }
+            else
+            {
+                <h1>No Content set.</h1>
+            }
+        </div>
+    </RadzenCard>
+</div>
+
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool IsHeaderVisible { get; set; }
+
+    [Parameter]
+    public RenderFragment HeaderContent { get; set; }
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+}

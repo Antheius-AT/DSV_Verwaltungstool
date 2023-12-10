@@ -1,0 +1,19 @@
+﻿@using DSV_Frontend.ViewModels;
+@using DSV_Frontend.UI_Controls.Display
+ 
+@if (this.ViewModel != null)
+{
+    <div class="row">
+        @foreach (var item in this.ViewModel.Images)
+        {
+            <div class="mt-2 col-lg-4 col-md-6 col-sm-12">
+                <img src="@item.Base64EncodedImageData/jpeg;base64" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public ImageListViewModel ViewModel { get; set; }
+}
